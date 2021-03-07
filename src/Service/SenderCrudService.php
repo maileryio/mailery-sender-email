@@ -6,7 +6,7 @@ namespace Mailery\Sender\Email\Service;
 
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Transaction;
-use Mailery\Sender\Email\Entity\Sender;
+use Mailery\Sender\Email\Entity\EmailSender as Sender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 
 class SenderCrudService

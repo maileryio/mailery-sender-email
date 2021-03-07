@@ -5,8 +5,8 @@ namespace Mailery\Sender\Email\Controller;
 use Mailery\Widget\Search\Form\SearchForm;
 use Mailery\Widget\Search\Model\SearchByList;
 use Mailery\Sender\Email\Search\SenderSearchBy;
-use Mailery\Sender\Email\Filter\SenderFilter;
-use Mailery\Sender\Email\Repository\SenderRepository;
+use Mailery\Sender\Filter\SenderFilter;
+use Mailery\Sender\Repository\SenderRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Yii\View\ViewRenderer;
@@ -112,7 +112,7 @@ class SenderController
             if (($sender = $senderForm->save()) !== null) {
                 return $this->responseFactory
                     ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/sender/sender/view', ['id' => $sender->getId()]));
+                    ->withHeader('Location', $urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
             }
         }
 
@@ -149,7 +149,7 @@ class SenderController
             if ($senderForm->save() !== null) {
                 return $this->responseFactory
                     ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/sender/sender/view', ['id' => $sender->getId()]));
+                    ->withHeader('Location', $urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
             }
         }
 
@@ -173,6 +173,6 @@ class SenderController
 
         return $this->responseFactory
             ->createResponse(302)
-            ->withHeader('Location', $urlGenerator->generate('/sender/sender/index'));
+            ->withHeader('Location', $urlGenerator->generate('/sender/email/index'));
     }
 }

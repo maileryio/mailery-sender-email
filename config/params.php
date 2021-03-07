@@ -12,17 +12,13 @@ return [
     'maileryio/mailery-menu-sidebar' => [
         'items' => [
             'senders' => [
-                'label' => static function () {
-                    return 'Senders';
-                },
-                'icon' => 'at',
                 'items' => [
                     'senders' => [
                         'label' => static function () {
-                            return 'All Senders';
+                            return 'Email addresses';
                         },
                         'url' => static function (UrlGeneratorInterface $urlGenerator) {
-                            return $urlGenerator->generate('/sender/sender/index');
+                            return $urlGenerator->generate('/sender/email/index');
                         },
                     ],
                 ],

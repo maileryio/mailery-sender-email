@@ -2,7 +2,7 @@
 
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
-use Mailery\Sender\Email\Entity\Sender;
+use Mailery\Sender\Email\Entity\EmailSender as Sender;
 use Mailery\Sender\Email\Module;
 use Mailery\Widget\Dataview\Columns\ActionColumn;
 use Mailery\Widget\Dataview\Columns\DataColumn;
@@ -20,12 +20,12 @@ use Yiisoft\Html\Html;
 /** @var Yiisoft\Data\Paginator\PaginatorInterface $paginator */
 /** @var string $csrf */
 
-$this->setTitle('All senders');
+$this->setTitle('Email addresses');
 
 ?><div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
-            <h1 class="h3">All senders</h1>
+            <h1 class="h3">Email addresses</h1>
             <div class="btn-toolbar float-right">
                 <?= SearchWidget::widget()->form($searchForm); ?>
                 <b-dropdown right size="sm" variant="secondary" class="mb-2">
@@ -37,9 +37,9 @@ $this->setTitle('All senders');
                         ->label('Activity log')
                         ->module(Module::NAME); ?>
                 </b-dropdown>
-                <a class="btn btn-sm btn-primary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/sender/create'); ?>">
+                <a class="btn btn-sm btn-primary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/create'); ?>">
                     <?= Icon::widget()->name('plus')->options(['class' => 'mr-1']); ?>
-                    Add new sender
+                    Add new address
                 </a>
             </div>
         </div>
@@ -75,7 +75,7 @@ $this->setTitle('All senders');
                     ->update(function (Sender $data, int $index) use ($urlGenerator) {
                         return Html::a(
                             Icon::widget()->name('pencil')->render(),
-                            $urlGenerator->generate('/sender/sender/edit', ['id' => $data->getId()]),
+                            $urlGenerator->generate('/sender/email/edit', ['id' => $data->getId()]),
                             [
                                 'class' => 'text-decoration-none mr-3',
                             ]
@@ -94,7 +94,7 @@ $this->setTitle('All senders');
                         return Link::widget()
                             ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render())
                             ->method('delete')
-                            ->href($urlGenerator->generate('/sender/sender/delete', ['id' => $data->getId()]))
+                            ->href($urlGenerator->generate('/sender/email/delete', ['id' => $data->getId()]))
                             ->confirm('Are you sure?')
                             ->options([
                                 'class' => 'text-decoration-none text-danger',
@@ -121,7 +121,7 @@ if ($paginator->getTotalItems() > 0) {
                 ->prevPageLabel('Previous')
                 ->nextPageLabel('Next')
                 ->urlGenerator(function (int $page) use ($urlGenerator) {
-                    $url = $urlGenerator->generate('/sender/sender/index');
+                    $url = $urlGenerator->generate('/sender/email/index');
                     if ($page > 1) {
                         $url = $url . '?page=' . $page;
                     }

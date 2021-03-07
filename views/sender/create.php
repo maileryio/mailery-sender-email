@@ -15,7 +15,7 @@ $this->setTitle('New sender');
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
             <h1 class="h3">New sender</h1>
             <div class="btn-toolbar float-right">
-                <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/sender/index'); ?>">
+                <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/index'); ?>">
                     Back
                 </a>
             </div>

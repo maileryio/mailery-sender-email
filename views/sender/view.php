@@ -2,13 +2,13 @@
 
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
-use Mailery\Sender\Email\Entity\Sender;
+use Mailery\Sender\Email\Entity\EmailSender as Sender;
 use Mailery\Widget\Dataview\DetailView;
 use Mailery\Widget\Link\Link;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Sender\Email\Entity\Sender $sender */
+/** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var string $csrf */
 /** @var bool $submitted */
 
@@ -22,14 +22,14 @@ $this->setTitle($sender->getName());
                 <?= Link::widget()
                     ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render() . ' Delete')
                     ->method('delete')
-                    ->href($urlGenerator->generate('/sender/sender/delete', ['id' => $sender->getId()]))
+                    ->href($urlGenerator->generate('/sender/email/delete', ['id' => $sender->getId()]))
                     ->confirm('Are you sure?')
                     ->options([
                         'class' => 'btn btn-sm btn-danger mx-sm-1 mb-2',
                     ])
                     ->encode(false);
                 ?>
-                <a class="btn btn-sm btn-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/sender/edit', ['id' => $sender->getId()]); ?>">
+                <a class="btn btn-sm btn-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/edit', ['id' => $sender->getId()]); ?>">
                     <?= Icon::widget()->name('pencil')->options(['class' => 'mr-1']); ?>
                     Update
                 </a>
@@ -43,7 +43,7 @@ $this->setTitle($sender->getName());
                         ->entity($sender); ?>
                 </b-dropdown>
                 <div class="btn-toolbar float-right">
-                    <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/sender/index'); ?>">
+                    <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/index'); ?>">
                         Back
                     </a>
                 </div>

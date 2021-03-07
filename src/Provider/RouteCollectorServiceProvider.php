@@ -26,15 +26,15 @@ final class RouteCollectorServiceProvider extends ServiceProvider
                 [
                     // Senders:
                     Route::get('/senders', [SenderController::class, 'index'])
-                        ->name('/sender/sender/index'),
-                    Route::get('/sender/sender/view/{id:\d+}', [SenderController::class, 'view'])
-                        ->name('/sender/sender/view'),
-                    Route::methods(['GET', 'POST'], '/sender/sender/create', [SenderController::class, 'create'])
-                        ->name('/sender/sender/create'),
-                    Route::methods(['GET', 'POST'], '/sender/sender/edit/{id:\d+}', [SenderController::class, 'edit'])
-                        ->name('/sender/sender/edit'),
-                    Route::delete('/sender/sender/delete/{id:\d+}', [SenderController::class, 'delete'])
-                        ->name('/sender/sender/delete'),
+                        ->name('/sender/email/index'),
+                    Route::get('/sender/email/view/{id:\d+}', [SenderController::class, 'view'])
+                        ->name('/sender/email/view'),
+                    Route::methods(['GET', 'POST'], '/sender/email/create', [SenderController::class, 'create'])
+                        ->name('/sender/email/create'),
+                    Route::methods(['GET', 'POST'], '/sender/email/edit/{id:\d+}', [SenderController::class, 'edit'])
+                        ->name('/sender/email/edit'),
+                    Route::delete('/sender/email/delete/{id:\d+}', [SenderController::class, 'delete'])
+                        ->name('/sender/email/delete'),
                 ]
             )
         );
