@@ -17,7 +17,7 @@ use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
 use Yiisoft\Http\Method;
 use Mailery\Sender\Email\Service\SenderCrudService;
 
-class SenderController
+class DefaultController
 {
     private const PAGINATION_INDEX = 10;
 

@@ -1,6 +1,8 @@
 <?php
 
 use Yiisoft\Router\UrlGeneratorInterface;
+use Yiisoft\Factory\Definitions\Reference;
+use Mailery\Sender\Email\Model\EmailType;
 
 return [
     'yiisoft/yii-cycle' => [
@@ -9,18 +11,36 @@ return [
         ],
     ],
 
+    'maileryio/mailery-sender' => [
+        'types' => [
+            Reference::to(EmailType::class),
+        ],
+    ],
+
     'maileryio/mailery-menu-sidebar' => [
         'items' => [
             'senders' => [
                 'items' => [
-                    'senders' => [
+                    'email-addresses' => [
                         'label' => static function () {
                             return 'Email addresses';
                         },
                         'url' => static function (UrlGeneratorInterface $urlGenerator) {
                             return $urlGenerator->generate('/sender/email/index');
                         },
+                        'activeRouteNames' => [
+                            '/sender/email/index',
+                            '/sender/email/view',
+                            '/sender/email/create',
+                            '/sender/email/edit',
+                        ],
                     ],
+                ],
+                'activeRouteNames' => [
+                    '/sender/email/index',
+                    '/sender/email/view',
+                    '/sender/email/create',
+                    '/sender/email/edit',
                 ],
             ],
         ],
