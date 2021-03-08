@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mailery\Sender\Email\ValueObject;
 
-use Mailery\Brand\Entity\Brand;
 use Mailery\Sender\Email\Form\SenderForm;
 
 class SenderValueObject
@@ -15,9 +14,19 @@ class SenderValueObject
     private string $name;
 
     /**
-     * @var Brand
+     * @var string
      */
-    private Brand $brand;
+    private string $email;
+
+    /**
+     * @var string
+     */
+    private string $replyName;
+
+    /**
+     * @var string
+     */
+    private string $replyEmail;
 
     /**
      * @param SenderForm $form
@@ -26,8 +35,10 @@ class SenderValueObject
     public static function fromForm(SenderForm $form): self
     {
         $new = new self();
-
-        $new->name = $form['name']->getValue();
+        $new->name = $form->getAttributeValue('name');
+        $new->email = $form->getAttributeValue('email');
+        $new->replyName = $form->getAttributeValue('replyName');
+        $new->replyEmail = $form->getAttributeValue('replyEmail');
 
         return $new;
     }
@@ -41,22 +52,26 @@ class SenderValueObject
     }
 
     /**
-     * @return Brand
+     * @return string
      */
-    public function getBrand(): Brand
+    public function getEmail(): string
     {
-        return $this->brand;
+        return $this->email;
     }
 
     /**
-     * @param Brand $brand
-     * @return self
+     * @return string
      */
-    public function withBrand(Brand $brand): self
+    public function getReplyName(): string
     {
-        $new = clone $this;
-        $new->brand = $brand;
+        return $this->replyName;
+    }
 
-        return $new;
+    /**
+     * @return string
+     */
+    public function getReplyEmail(): string
+    {
+        return $this->replyEmail;
     }
 }

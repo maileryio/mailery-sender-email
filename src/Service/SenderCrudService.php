@@ -6,8 +6,9 @@ namespace Mailery\Sender\Email\Service;
 
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Transaction;
-use Mailery\Sender\Email\Entity\EmailSender as Sender;
+use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
+use Mailery\Brand\Entity\Brand;
 
 class SenderCrudService
 {
@@ -15,6 +16,11 @@ class SenderCrudService
      * @var ORMInterface
      */
     private ORMInterface $orm;
+
+    /**
+     * @var Brand
+     */
+    private Brand $brand;
 
     /**
      * @param ORMInterface $orm
@@ -25,14 +31,29 @@ class SenderCrudService
     }
 
     /**
-     * @param SenderValueObject $valueObject
-     * @return Sender
+     * @param Brand $brand
+     * @return self
      */
-    public function create(SenderValueObject $valueObject): Sender
+    public function withBrand(Brand $brand): self
     {
-        $sender = (new Sender())
+        $new = clone $this;
+        $new->brand = $brand;
+
+        return $new;
+    }
+
+    /**
+     * @param SenderValueObject $valueObject
+     * @return EmailSender
+     */
+    public function create(SenderValueObject $valueObject): EmailSender
+    {
+        $sender = (new EmailSender())
+            ->setBrand($this->brand)
             ->setName($valueObject->getName())
-            ->setBrand($valueObject->getBrand())
+            ->setEmail($valueObject->getEmail())
+            ->setReplyName($valueObject->getReplyName())
+            ->setReplyEmail($valueObject->getReplyEmail())
         ;
 
         $tr = new Transaction($this->orm);
@@ -43,15 +64,17 @@ class SenderCrudService
     }
 
     /**
-     * @param Sender $sender
+     * @param EmailSender $sender
      * @param SenderValueObject $valueObject
-     * @return Sender
+     * @return EmailSender
      */
-    public function update(Sender $sender, SenderValueObject $valueObject): Sender
+    public function update(EmailSender $sender, SenderValueObject $valueObject): EmailSender
     {
         $sender = $sender
             ->setName($valueObject->getName())
-            ->setBrand($valueObject->getBrand())
+            ->setEmail($valueObject->getEmail())
+            ->setReplyName($valueObject->getReplyName())
+            ->setReplyEmail($valueObject->getReplyEmail())
         ;
 
         $tr = new Transaction($this->orm);
@@ -59,18 +82,5 @@ class SenderCrudService
         $tr->run();
 
         return $sender;
-    }
-
-    /**
-     * @param Sender $sender
-     * @return bool
-     */
-    public function delete(Sender $sender): bool
-    {
-        $tr = new Transaction($this->orm);
-        $tr->delete($sender);
-        $tr->run();
-
-        return true;
     }
 }

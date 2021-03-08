@@ -4,111 +4,97 @@ declare(strict_types=1);
 
 namespace Mailery\Sender\Email\Form;
 
-use FormManager\Factory as F;
-use FormManager\Form;
-use Mailery\Brand\Entity\Brand;
-use Mailery\Brand\BrandLocatorInterface as BrandLocator;
-use Mailery\Sender\Email\Entity\EmailSender as Sender;
-use Mailery\Sender\Repository\SenderRepository;
-use Mailery\Sender\Email\Service\SenderCrudService;
-use Mailery\Sender\Email\ValueObject\SenderValueObject;
-use Symfony\Component\Validator\Constraints;
+use Yiisoft\Form\FormModel;
+use Mailery\Sender\Email\Entity\EmailSender;
+use Yiisoft\Form\HtmlOptions\RequiredHtmlOptions;
+use Yiisoft\Form\HtmlOptions\HasLengthHtmlOptions;
+use Yiisoft\Form\HtmlOptions\EmailHtmlOptions;
+use Yiisoft\Validator\Rule\Required;
+use Yiisoft\Validator\Rule\HasLength;
+use Yiisoft\Validator\Rule\Email;
 
-class SenderForm extends Form
+class SenderForm extends FormModel
 {
     /**
-     * @var Brand
+     * @var string|null
      */
-    private Brand $brand;
+    private ?string $name = null;
 
     /**
-     * @var Sender|null
+     * @var string|null
      */
-    private ?Sender $sender = null;
+    private ?string $email = null;
 
     /**
-     * @var SenderRepository
+     * @var string|null
      */
-    private SenderRepository $senderRepo;
+    private ?string $replyName = null;
 
     /**
-     * @var SenderCrudService
+     * @var string|null
      */
-    private SenderCrudService $senderCrudService;
+    private ?string $replyEmail = null;
 
     /**
-     * @param BrandLocator $brandLocator
-     * @param SenderRepository $senderRepo
-     * @param SenderCrudService $senderCrudService
-     */
-    public function __construct(
-        BrandLocator $brandLocator,
-        SenderRepository $senderRepo,
-        SenderCrudService $senderCrudService
-    ) {
-        $this->brand = $brandLocator->getBrand();
-        $this->senderRepo = $senderRepo->withBrand($this->brand);
-        $this->senderCrudService = $senderCrudService;
-
-        parent::__construct($this->inputs());
-    }
-
-    /**
-     * @param string $csrf
-     * @return \self
-     */
-    public function withCsrf(string $value, string $name = '_csrf'): self
-    {
-        $this->offsetSet($name, F::hidden($value));
-
-        return $this;
-    }
-
-    /**
-     * @param Sender $sender
+     * @param EmailSender $sender
      * @return self
      */
-    public function withSender(Sender $sender): self
+    public function withSender(EmailSender $sender): self
     {
-        $this->sender = $sender;
-        $this->offsetSet('', F::submit('Update'));
+        $new = clone $this;
+        $new->name = $sender->getName();
+        $new->email = $sender->getEmail();
+        $new->replyName = $sender->getReplyName();
+        $new->replyEmail = $sender->getReplyEmail();
 
-        $this['name']->setValue($sender->getName());
-
-        return $this;
-    }
-
-    /**
-     * @return Sender|null
-     */
-    public function save(): ?Sender
-    {
-        if (!$this->isValid()) {
-            return null;
-        }
-
-        $valueObject = SenderValueObject::fromForm($this)
-            ->withBrand($this->brand);
-
-        if (($sender = $this->sender) === null) {
-            $sender = $this->senderCrudService->create($valueObject);
-        } else {
-            $this->senderCrudService->update($sender, $valueObject);
-        }
-
-        return $sender;
+        return $new;
     }
 
     /**
      * @return array
      */
-    private function inputs(): array
+    public function attributeLabels(): array
     {
         return [
-            'name' => F::text('Name')
-                ->addConstraint(new Constraints\NotBlank()),
+            'name' => 'Name',
+            'email' => 'Email',
+            'replyName' => 'Reply to name',
+            'replyEmail' => 'Reply to email',
+        ];
+    }
 
-            '' => F::submit($this->sender === null ? 'Create' : 'Update'),
+    /**
+     * @return string
+     */
+    public function formName(): string
+    {
+        return 'SenderForm';
+    }
+
+    /**
+     * @return array
+     */
+    public function getRules(): array
+    {
+        return [
+            'name' => [
+                new RequiredHtmlOptions(new Required()),
+                new HasLengthHtmlOptions((new HasLength())->max(255)),
+            ],
+            'email' => [
+                new RequiredHtmlOptions(new Required()),
+                new HasLengthHtmlOptions((new HasLength())->max(255)),
+                new EmailHtmlOptions((new Email())),
+            ],
+            'replyName' => [
+                new RequiredHtmlOptions(new Required()),
+                new HasLengthHtmlOptions((new HasLength())->max(255)),
+            ],
+            'replyEmail' => [
+                new RequiredHtmlOptions(new Required()),
+                new HasLengthHtmlOptions((new HasLength())->max(255)),
+                new EmailHtmlOptions((new Email())),
+            ],
         ];
     }
 }

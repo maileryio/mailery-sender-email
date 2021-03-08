@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-use Mailery\Widget\Form\FormRenderer;
-
-/** @var Yiisoft\Yii\WebView $this */
+/** @var Yiisoft\Form\Widget\Field $field */
+/** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
+/** @var Yiisoft\View\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var FormManager\Form $senderForm */
+/** @var Mailery\Sender\Email\Form\SenderForm $form */
 /** @var string $csrf */
-/** @var bool $submitted */
 
 $this->setTitle('New sender');
 
@@ -23,8 +22,5 @@ $this->setTitle('New sender');
     </div>
 </div>
 <div class="mb-2"></div>
-<div class="row">
-    <div class="col-6">
-        <?= (new FormRenderer($senderForm->withCsrf($csrf)))($submitted); ?>
-    </div>
-</div>
+
+<?= $this->render('_form', compact('csrf', 'field', 'form')) ?>

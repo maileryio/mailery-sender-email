@@ -2,7 +2,7 @@
 
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
-use Mailery\Sender\Email\Entity\EmailSender as Sender;
+use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Widget\Dataview\DetailView;
 use Mailery\Widget\Link\Link;
 
@@ -66,8 +66,26 @@ $this->setTitle($sender->getName());
             ->attributes([
                 [
                     'label' => 'Name',
-                    'value' => function (Sender $data, $index) {
+                    'value' => function (EmailSender $data, $index) {
                         return $data->getName();
+                    },
+                ],
+                [
+                    'label' => 'Email',
+                    'value' => function (EmailSender $data, $index) {
+                        return $data->getEmail();
+                    },
+                ],
+                [
+                    'label' => 'Reply name',
+                    'value' => function (EmailSender $data, $index) {
+                        return $data->getReplyName();
+                    },
+                ],
+                [
+                    'label' => 'Reply email',
+                    'value' => function (EmailSender $data, $index) {
+                        return $data->getReplyEmail();
                     },
                 ],
             ]);

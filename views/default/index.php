@@ -2,7 +2,7 @@
 
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
-use Mailery\Sender\Email\Entity\EmailSender as Sender;
+use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\Module;
 use Mailery\Widget\Dataview\Columns\ActionColumn;
 use Mailery\Widget\Dataview\Columns\DataColumn;
@@ -63,8 +63,26 @@ $this->setTitle('Email addresses');
             ->columns([
                 (new DataColumn())
                     ->header('Name')
-                    ->content(function (Sender $data, int $index) use ($urlGenerator) {
-                        return $data->getName();
+                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                        return Html::a(
+                            $data->getName(),
+                            $urlGenerator->generate($data->getViewRouteName(), $data->getViewRouteParams())
+                        );
+                    }),
+                (new DataColumn())
+                    ->header('Email')
+                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                        return $data->getEmail();
+                    }),
+                (new DataColumn())
+                    ->header('Reply name')
+                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                        return $data->getReplyName();
+                    }),
+                (new DataColumn())
+                    ->header('Reply email')
+                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                        return $data->getReplyEmail();
                     }),
                 (new ActionColumn())
                     ->contentOptions([
@@ -72,10 +90,10 @@ $this->setTitle('Email addresses');
                     ])
                     ->header('Edit')
                     ->view('')
-                    ->update(function (Sender $data, int $index) use ($urlGenerator) {
+                    ->update(function (EmailSender $data, int $index) use ($urlGenerator) {
                         return Html::a(
                             Icon::widget()->name('pencil')->render(),
-                            $urlGenerator->generate('/sender/email/edit', ['id' => $data->getId()]),
+                            $urlGenerator->generate($data->getEditRouteName(), $data->getEditRouteParams()),
                             [
                                 'class' => 'text-decoration-none mr-3',
                             ]
@@ -90,11 +108,11 @@ $this->setTitle('Email addresses');
                     ->header('Delete')
                     ->view('')
                     ->update('')
-                    ->delete(function (Sender $data, int $index) use ($urlGenerator) {
+                    ->delete(function (EmailSender $data, int $index) use ($urlGenerator) {
                         return Link::widget()
                             ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render())
                             ->method('delete')
-                            ->href($urlGenerator->generate('/sender/email/delete', ['id' => $data->getId()]))
+                            ->href($urlGenerator->generate($data->getDeleteRouteName(), $data->getDeleteRouteParams()))
                             ->confirm('Are you sure?')
                             ->options([
                                 'class' => 'text-decoration-none text-danger',

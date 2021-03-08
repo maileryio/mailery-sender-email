@@ -15,11 +15,31 @@ use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Sender\Email\Form\SenderForm;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
 use Yiisoft\Http\Method;
+use Yiisoft\Http\Status;
+use Yiisoft\Http\Header;
 use Mailery\Sender\Email\Service\SenderCrudService;
+use Yiisoft\Validator\ValidatorInterface;
+use Mailery\Sender\Email\ValueObject\SenderValueObject;
+use Yiisoft\Session\Flash\FlashInterface;
 
 class DefaultController
 {
     private const PAGINATION_INDEX = 10;
+
+    /**
+     * @var ViewRenderer
+     */
+    private ViewRenderer $viewRenderer;
+
+    /**
+     * @var ResponseFactory
+     */
+    private ResponseFactory $responseFactory;
+
+    /**
+     * @var UrlGenerator
+     */
+    private UrlGenerator $urlGenerator;
 
     /**
      * @var SenderRepository
@@ -27,23 +47,33 @@ class DefaultController
     private SenderRepository $senderRepo;
 
     /**
+     * @var SenderCrudService
+     */
+    private SenderCrudService $senderCrudService;
+
+    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
      * @param BrandLocatorInterface $brandLocator
+     * @param UrlGenerator $urlGenerator
      * @param SenderRepository $senderRepo
      */
     public function __construct(
         ViewRenderer $viewRenderer,
         ResponseFactory $responseFactory,
         BrandLocatorInterface $brandLocator,
-        SenderRepository $senderRepo
+        UrlGenerator $urlGenerator,
+        SenderRepository $senderRepo,
+        SenderCrudService $senderCrudService
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
             ->withViewBasePath(dirname(dirname(__DIR__)) . '/views');
 
         $this->responseFactory = $responseFactory;
+        $this->urlGenerator = $urlGenerator;
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
+        $this->senderCrudService = $senderCrudService->withBrand($brandLocator->getBrand());
     }
 
     /**
@@ -90,89 +120,56 @@ class DefaultController
 
     /**
      * @param Request $request
-     * @param SenderForm $senderForm
-     * @param UrlGenerator $urlGenerator
+     * @param ValidatorInterface $validator
+     * @param SenderForm $form
      * @return Response
      */
-    public function create(Request $request, SenderForm $senderForm, UrlGenerator $urlGenerator): Response
+    public function create(Request $request, ValidatorInterface $validator, SenderForm $form): Response
     {
-        $submitted = $request->getMethod() === Method::POST;
+        $body = $request->getParsedBody();
 
-        $senderForm
-            ->setAttributes([
-                'action' => $request->getUri()->getPath(),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data',
-            ])
-        ;
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = SenderValueObject::fromForm($form);
+            $this->senderCrudService->create($valueObject);
 
-        if ($submitted) {
-            $senderForm->loadFromServerRequest($request);
-
-            if (($sender = $senderForm->save()) !== null) {
-                return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
-            }
+            return $this->responseFactory
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/index'));
         }
 
-        return $this->viewRenderer->render('create', compact('senderForm', 'submitted'));
+        return $this->viewRenderer->render('create', compact('form'));
     }
 
     /**
      * @param Request $request
-     * @param SenderForm $senderForm
-     * @param UrlGenerator $urlGenerator
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param SenderForm $form
      * @return Response
      */
-    public function edit(Request $request, SenderForm $senderForm, UrlGenerator $urlGenerator): Response
+    public function edit(Request $request, ValidatorInterface $validator, FlashInterface $flash, SenderForm $form): Response
     {
+        $body = $request->getParsedBody();
         $senderId = $request->getAttribute('id');
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
             return $this->responseFactory->createResponse(404);
         }
 
-        $senderForm
-            ->withSender($sender)
-            ->setAttributes([
-                'action' => $request->getUri()->getPath(),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data',
-            ])
-        ;
+        $form = $form->withSender($sender);
 
-        $submitted = $request->getMethod() === Method::POST;
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = SenderValueObject::fromForm($form);
+            $this->senderCrudService->update($sender, $valueObject);
 
-        if ($submitted) {
-            $senderForm->loadFromServerRequest($request);
-
-            if ($senderForm->save() !== null) {
-                return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
-            }
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
         }
 
-        return $this->viewRenderer->render('edit', compact('sender', 'senderForm', 'submitted'));
-    }
-
-    /**
-     * @param Request $request
-     * @param SenderCrudService $senderCrudService
-     * @param UrlGenerator $urlGenerator
-     * @return Response
-     */
-    public function delete(Request $request, SenderCrudService $senderCrudService, UrlGenerator $urlGenerator): Response
-    {
-        $senderId = $request->getAttribute('id');
-        if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
-            return $this->responseFactory->createResponse(404);
-        }
-
-        $senderCrudService->delete($sender);
-
-        return $this->responseFactory
-            ->createResponse(302)
-            ->withHeader('Location', $urlGenerator->generate('/sender/email/index'));
+        return $this->viewRenderer->render('edit', compact('form', 'sender'));
     }
 }
