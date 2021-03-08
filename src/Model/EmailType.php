@@ -2,6 +2,7 @@
 
 namespace Mailery\Sender\Email\Model;
 
+use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Model\SenderTypeInterface;
 
 class EmailType implements SenderTypeInterface
@@ -36,5 +37,14 @@ class EmailType implements SenderTypeInterface
     public function getCreateRouteParams(): array
     {
         return [];
+    }
+
+    /**
+     * @param object $entity
+     * @return bool
+     */
+    public function isEntitySameType(object $entity): bool
+    {
+        return $entity instanceof EmailSender;
     }
 }
