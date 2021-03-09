@@ -22,7 +22,8 @@ use Yiisoft\Form\Widget\Form;
             ->begin(); ?>
 
         <?= $field->config($form, 'name'); ?>
-        <?= $field->config($form, 'email'); ?>
+        <?= $field->config($form, 'email')
+            ->textInput(['disabled' => !empty($sender)]); ?>
         <?= $field->config($form, 'replyName'); ?>
         <?= $field->config($form, 'replyEmail'); ?>
 

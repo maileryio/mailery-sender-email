@@ -18,6 +18,7 @@ use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Http\Header;
 use Mailery\Sender\Email\Service\SenderCrudService;
+use Mailery\Sender\Email\Service\SenderVerifyService;
 use Yiisoft\Validator\ValidatorInterface;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -52,11 +53,18 @@ class DefaultController
     private SenderCrudService $senderCrudService;
 
     /**
+     * @var SenderVerifyService
+     */
+    private SenderVerifyService $senderVerifyService;
+
+    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
      * @param BrandLocatorInterface $brandLocator
      * @param UrlGenerator $urlGenerator
      * @param SenderRepository $senderRepo
+     * @param SenderCrudService $senderCrudService
+     * @param SenderVerifyService $senderVerifyService
      */
     public function __construct(
         ViewRenderer $viewRenderer,
@@ -64,7 +72,8 @@ class DefaultController
         BrandLocatorInterface $brandLocator,
         UrlGenerator $urlGenerator,
         SenderRepository $senderRepo,
-        SenderCrudService $senderCrudService
+        SenderCrudService $senderCrudService,
+        SenderVerifyService $senderVerifyService
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
@@ -74,6 +83,7 @@ class DefaultController
         $this->urlGenerator = $urlGenerator;
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->senderCrudService = $senderCrudService->withBrand($brandLocator->getBrand());
+        $this->senderVerifyService = $senderVerifyService;
     }
 
     /**
@@ -130,7 +140,9 @@ class DefaultController
 
         if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
             $valueObject = SenderValueObject::fromForm($form);
-            $this->senderCrudService->create($valueObject);
+            $sender = $this->senderCrudService->create($valueObject);
+
+            $this->senderVerifyService->verify($sender);
 
             return $this->responseFactory
                 ->createResponse(Status::FOUND)

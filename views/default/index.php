@@ -71,18 +71,36 @@ $this->setTitle('Email addresses');
                     }),
                 (new DataColumn())
                     ->header('Email')
-                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                    ->content(function (EmailSender $data, int $index) {
                         return $data->getEmail();
                     }),
                 (new DataColumn())
                     ->header('Reply name')
-                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                    ->content(function (EmailSender $data, int $index) {
                         return $data->getReplyName();
                     }),
                 (new DataColumn())
                     ->header('Reply email')
-                    ->content(function (EmailSender $data, int $index) use ($urlGenerator) {
+                    ->content(function (EmailSender $data, int $index) {
                         return $data->getReplyEmail();
+                    }),
+                (new DataColumn())
+                    ->header('Verification')
+                    ->content(function (EmailSender $data, int $index) {
+                        return 'Email confirmation';
+                    }),
+                (new DataColumn())
+                    ->header('Status')
+                    ->content(function (EmailSender $data, int $index) {
+                        if ($data->isPending()) {
+                            return '<span class="ml-2 badge badge-warning">pending</span>';
+                        } else if ($data->isActive()) {
+                            return '<span class="ml-2 badge badge-success">active</span>';
+                        } else if ($data->isInactive()) {
+                            return '<span class="ml-2 badge badge-danger">inactive</span>';
+                        } else {
+                            return '<span class="ml-2 badge badge-secondary">unknown</span>';
+                        }
                     }),
                 (new ActionColumn())
                     ->contentOptions([

@@ -54,6 +54,7 @@ class SenderCrudService
             ->setEmail($valueObject->getEmail())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
+            ->setStatus(EmailSender::STATUS_PENDING)
         ;
 
         $tr = new Transaction($this->orm);
@@ -72,7 +73,6 @@ class SenderCrudService
     {
         $sender = $sender
             ->setName($valueObject->getName())
-            ->setEmail($valueObject->getEmail())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
         ;

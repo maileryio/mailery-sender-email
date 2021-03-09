@@ -18,7 +18,9 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.4",
-        "foxy/foxy": "^1.0"
+        "foxy/foxy": "^1.0",
+        "yiisoft/mailer": "^3.0@dev",
+        "yiisoft/mailer-swiftmailer": "^3.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
