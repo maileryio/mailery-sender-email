@@ -6,14 +6,14 @@ use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Domain\Entity\Domain;
 use Mailery\Sender\Domain\Repository\DomainRepository;
 use Mailery\Sender\Email\Model\VerificationToken;
-use Yiisoft\Mailer\Mailer;
+use Yiisoft\Mailer\MailerInterface;
 
 class SenderVerifyService
 {
     /**
-     * @var Mailer
+     * @var MailerInterface
      */
-    private Mailer $mailer;
+    private MailerInterface $mailer;
 
     /**
      * @var DomainRepository
@@ -26,11 +26,11 @@ class SenderVerifyService
     private ?string $verificationToken = null;
 
     /**
-     * @param Mailer $mailer
+     * @param MailerInterface $mailer
      * @param DomainRepository $domainRepo
      */
     public function __construct(
-        Mailer $mailer,
+        MailerInterface $mailer,
         DomainRepository $domainRepo
     ) {
         $this->mailer = $mailer;
@@ -80,8 +80,14 @@ class SenderVerifyService
                 ->generate()
         );
 
-        $this->mailer->
+        $message = $this->mailer->compose('verify')
+            ->withFrom('no-reply@mailery.io')
+            ->withTo($sender->getEmail())
+            ->withSubject('Please verify your email address')
+        ;
 
-        var_dump($sender->getVerificationToken());exit;
+        $this->mailer->send($message);
+
+        var_dump($message);exit;
     }
 }

@@ -17,6 +17,12 @@ return [
         ],
     ],
 
+    'maileryio/mailery-sender-email' => [
+        'messageBodyTemplate' => [
+            'viewPath' => '@vendor/maileryio/mailery-sender-email/resources/mail',
+        ],
+    ],
+
     'maileryio/mailery-menu-sidebar' => [
         'items' => [
             'senders' => [
