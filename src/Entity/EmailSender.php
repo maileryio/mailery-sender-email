@@ -178,6 +178,16 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
+     * @param string $domain
+     * @return bool
+     */
+    public function isSameDomain(string $domain): bool
+    {
+        $emailDomain = explode('@', $this->getEmail())[1];
+        return $emailDomain === $domain;
+    }
+
+    /**
      * @param Domain $domain
      * @return self
      */

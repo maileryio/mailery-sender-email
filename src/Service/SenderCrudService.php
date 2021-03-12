@@ -9,6 +9,7 @@ use Cycle\ORM\Transaction;
 use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Mailery\Brand\Entity\Brand;
+use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
 class SenderCrudService
 {
@@ -57,9 +58,7 @@ class SenderCrudService
             ->setStatus(EmailSender::STATUS_PENDING)
         ;
 
-        $tr = new Transaction($this->orm);
-        $tr->persist($sender);
-        $tr->run();
+        (new EntityWriter($this->orm))->write([$sender]);
 
         return $sender;
     }
@@ -77,9 +76,7 @@ class SenderCrudService
             ->setReplyEmail($valueObject->getReplyEmail())
         ;
 
-        $tr = new Transaction($this->orm);
-        $tr->persist($sender);
-        $tr->run();
+        (new EntityWriter($this->orm))->write([$sender]);
 
         return $sender;
     }

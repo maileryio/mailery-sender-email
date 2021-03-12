@@ -8,9 +8,16 @@ use Mailery\Sender\Domain\Repository\DomainRepository;
 use Mailery\Sender\Email\Model\VerificationToken;
 use Mailery\Common\Setting\CommonSettingGroup;
 use Yiisoft\Mailer\MailerInterface;
+use Cycle\ORM\ORMInterface;
+use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
 class SenderVerifyService
 {
+    /**
+     * @var ORMInterface
+     */
+    private ORMInterface $orm;
+
     /**
      * @var MailerInterface
      */
@@ -32,15 +39,18 @@ class SenderVerifyService
     private ?string $verificationToken = null;
 
     /**
+     * @param ORMInterface $orm
      * @param MailerInterface $mailer
      * @param CommonSettingGroup $settingGroup
      * @param DomainRepository $domainRepo
      */
     public function __construct(
+        ORMInterface $orm,
         MailerInterface $mailer,
         CommonSettingGroup $settingGroup,
         DomainRepository $domainRepo
     ) {
+        $this->orm = $orm;
         $this->mailer = $mailer;
         $this->settingGroup = $settingGroup;
         $this->domainRepo = $domainRepo;
@@ -48,10 +58,14 @@ class SenderVerifyService
 
     /**
      * @param string $verificationToken
+     * @return self
      */
-    public function withVerificationToken(string $verificationToken)
+    public function withVerificationToken(string $verificationToken): self
     {
-        $this->verificationToken = $verificationToken;
+        $new = clone $this;
+        $new->verificationToken = $verificationToken;
+
+        return $new;
     }
 
     /**
@@ -59,6 +73,19 @@ class SenderVerifyService
      * @return bool
      */
     public function verify(EmailSender $sender): bool
+    {
+        $result = $this->wrapVerify($sender);
+
+        (new EntityWriter($this->orm))->write([$sender]);
+
+        return $result;
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return bool
+     */
+    private function wrapVerify(EmailSender $sender): bool
     {
         if ($sender->isActive()) {
             return true;
@@ -75,21 +102,35 @@ class SenderVerifyService
             ->withBrand($sender->getBrand())
             ->findOne();
 
-        $active = $sender
-            ->verifyDomain($domain)
-            ->isActive();
-
-        if ($active) {
-            return true;
+        if ($sender->isSameDomain($domain->getDomain())) {
+            return $sender
+                ->verifyDomain($domain)
+                ->isActive();
         }
 
+        $this->sendVerificationEmail($sender);
+
+        return $sender->isActive();
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return void
+     */
+    private function sendVerificationEmail(EmailSender $sender): void
+    {
         $sender->setVerificationToken(
             (new VerificationToken())
                 ->withLength(32)
                 ->generate()
         );
 
-        $message = $this->mailer->compose('verify')
+        $message = $this->mailer->compose(
+                'verify',
+                [
+                    'sender' => $sender,
+                ]
+            )
             ->withFrom($this->settingGroup->getNoReplyEmail()->getValue())
             ->withTo($sender->getEmail())
             ->withSubject('Please verify your email address')

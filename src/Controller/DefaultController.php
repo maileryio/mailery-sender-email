@@ -184,4 +184,45 @@ class DefaultController
 
         return $this->viewRenderer->render('edit', compact('form', 'sender'));
     }
+
+    /**
+     * @param Request $request
+     * @param FlashInterface $flash
+     * @return Response
+     */
+    public function verify(Request $request, FlashInterface $flash): Response
+    {
+        $senderId = $request->getAttribute('id');
+        $verificationToken = $request->getAttribute('token');
+
+        if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
+            return $this->responseFactory->createResponse(404);
+        }
+
+        if ($sender->isActive()) {
+            return $this->responseFactory
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/index'));
+        }
+
+        $result = $this->senderVerifyService
+            ->withVerificationToken($verificationToken)
+            ->verify($sender);
+
+        if (!$result) {
+            return $this->responseFactory->createResponse(404);
+        }
+
+        $flash->add(
+            'success',
+            [
+                'body' => 'Email have been verified!',
+            ],
+            true
+        );
+
+        return $this->responseFactory
+            ->createResponse(Status::FOUND)
+            ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
+    }
 }

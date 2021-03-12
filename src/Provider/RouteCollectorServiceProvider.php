@@ -33,8 +33,9 @@ final class RouteCollectorServiceProvider extends ServiceProvider
                         ->name('/sender/email/create'),
                     Route::methods(['GET', 'POST'], '/sender/email/edit/{id:\d+}', [DefaultController::class, 'edit'])
                         ->name('/sender/email/edit'),
-                    Route::delete('/sender/email/delete/{id:\d+}', [DefaultController::class, 'delete'])
-                        ->name('/sender/email/delete'),
+
+                    Route::get('/sender/email/verify/{id:\d+}/{token:\w+}', [DefaultController::class, 'verify'])
+                        ->name('/sender/email/verify'),
                 ]
             )
         );
