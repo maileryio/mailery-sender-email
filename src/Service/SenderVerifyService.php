@@ -6,7 +6,7 @@ use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Domain\Entity\Domain;
 use Mailery\Sender\Domain\Repository\DomainRepository;
 use Mailery\Sender\Email\Model\VerificationToken;
-use Mailery\Common\Setting\CommonSettingGroup;
+use Mailery\Common\Setting\GeneralSettingGroup;
 use Yiisoft\Mailer\MailerInterface;
 use Cycle\ORM\ORMInterface;
 use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
@@ -24,9 +24,9 @@ class SenderVerifyService
     private MailerInterface $mailer;
 
     /**
-     * @var CommonSettingGroup
+     * @var GeneralSettingGroup
      */
-    private CommonSettingGroup $settingGroup;
+    private GeneralSettingGroup $settingGroup;
 
     /**
      * @var DomainRepository
@@ -41,13 +41,13 @@ class SenderVerifyService
     /**
      * @param ORMInterface $orm
      * @param MailerInterface $mailer
-     * @param CommonSettingGroup $settingGroup
+     * @param GeneralSettingGroup $settingGroup
      * @param DomainRepository $domainRepo
      */
     public function __construct(
         ORMInterface $orm,
         MailerInterface $mailer,
-        CommonSettingGroup $settingGroup,
+        GeneralSettingGroup $settingGroup,
         DomainRepository $domainRepo
     ) {
         $this->orm = $orm;
