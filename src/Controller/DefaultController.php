@@ -22,6 +22,7 @@ use Mailery\Sender\Email\Service\SenderVerifyService;
 use Yiisoft\Validator\ValidatorInterface;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Yiisoft\Session\Flash\FlashInterface;
+use Mailery\Sender\Email\Enum\VerificationType;
 
 class DefaultController
 {
@@ -88,9 +89,10 @@ class DefaultController
 
     /**
      * @param Request $request
+     * @param VerificationType $verificationType
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(Request $request, VerificationType $verificationType): Response
     {
         $queryParams = $request->getQueryParams();
         $pageNum = (int) ($queryParams['page'] ?? 1);
@@ -111,7 +113,7 @@ class DefaultController
             ->withPageSize(self::PAGINATION_INDEX)
             ->withCurrentPage($pageNum);
 
-        return $this->viewRenderer->render('index', compact('searchForm', 'paginator'));
+        return $this->viewRenderer->render('index', compact('searchForm', 'paginator', 'verificationType'));
     }
 
     /**

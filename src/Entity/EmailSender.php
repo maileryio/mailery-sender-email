@@ -9,6 +9,7 @@ use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Sender\Domain\Entity\Domain;
+use Mailery\Sender\Email\Enum\VerificationType;
 
 /**
  * @Cycle\Annotated\Annotation\Entity
@@ -16,9 +17,6 @@ use Mailery\Sender\Domain\Entity\Domain;
 class EmailSender extends Sender implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;
-
-    public const VERIFICATION_DOMAIN = 'domain';
-    public const VERIFICATION_TOKEN = 'token';
 
     /**
      * @Cycle\Annotated\Annotation\Column(type = "string(255)", nullable = true)
@@ -193,12 +191,11 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
      */
     public function verifyDomain(Domain $domain): self
     {
-        $emailDomain = explode('@', $this->getEmail())[1];
-        if ($emailDomain === $domain->getDomain()) {
-            $this->setVerificationType(EmailSender::VERIFICATION_DOMAIN);
+        if ($this->isSameDomain($domain->getDomain())) {
+            $this->setVerificationType(VerificationType::DOMAIN);
 
             if ($domain->isVerified()) {
-                $this->setStatus(EmailSender::STATUS_ACTIVE);
+                $this->setStatus(self::STATUS_ACTIVE);
             }
         }
 
@@ -213,7 +210,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     {
         if ($verificationToken === $this->getVerificationToken()) {
             $this->setStatus(self::STATUS_ACTIVE);
-            $this->setVerificationType(self::VERIFICATION_TOKEN);
+            $this->setVerificationType(VerificationType::TOKEN);
         }
 
         return $this;

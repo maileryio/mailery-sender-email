@@ -13,6 +13,7 @@ use Mailery\Widget\Search\Widget\SearchWidget;
 use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
+/** @var Mailery\Sender\Email\Enum\VerificationType $verificationType */
 /** @var Mailery\Widget\Search\Form\SearchForm $searchForm */
 /** @var Yiisoft\Aliases\Aliases $aliases */
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
@@ -86,8 +87,8 @@ $this->setTitle('Email addresses');
                     }),
                 (new DataColumn())
                     ->header('Verification')
-                    ->content(function (EmailSender $data, int $index) {
-                        return 'Email confirmation';
+                    ->content(function (EmailSender $data, int $index) use($verificationType) {
+                        return $verificationType->getLabelBySender($data);
                     }),
                 (new DataColumn())
                     ->header('Status')
