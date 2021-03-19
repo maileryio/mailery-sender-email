@@ -10,10 +10,12 @@ use Mailery\Widget\Dataview\GridView;
 use Mailery\Widget\Dataview\GridView\LinkPager;
 use Mailery\Widget\Link\Link;
 use Mailery\Widget\Search\Widget\SearchWidget;
+use Mailery\Sender\Model\Status;
+use Mailery\Sender\Email\Model\VerificationType;
 use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
-/** @var Mailery\Sender\Email\Enum\VerificationType $verificationType */
+/** @var Mailery\Sender\Email\Model\VerificationType $verificationType */
 /** @var Mailery\Widget\Search\Form\SearchForm $searchForm */
 /** @var Yiisoft\Aliases\Aliases $aliases */
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
@@ -87,21 +89,24 @@ $this->setTitle('Email addresses');
                     }),
                 (new DataColumn())
                     ->header('Verification')
-                    ->content(function (EmailSender $data, int $index) use($verificationType) {
-                        return $verificationType->getLabelBySender($data);
+                    ->content(function (EmailSender $data, int $index) {
+                        return VerificationType::fromEntity($data)->getLabel();
                     }),
                 (new DataColumn())
                     ->header('Status')
                     ->content(function (EmailSender $data, int $index) {
+                        $status = Status::fromEntity($data);
                         if ($data->isPending()) {
-                            return '<span class="ml-2 badge badge-warning">pending</span>';
+                            $cssClass = 'badge-warning';
                         } else if ($data->isActive()) {
-                            return '<span class="ml-2 badge badge-success">active</span>';
+                            $cssClass = 'badge-success';
                         } else if ($data->isInactive()) {
-                            return '<span class="ml-2 badge badge-danger">inactive</span>';
+                            $cssClass = 'badge-danger';
                         } else {
-                            return '<span class="ml-2 badge badge-secondary">unknown</span>';
+                            $cssClass = 'badge-secondary';
                         }
+
+                        return '<span class="ml-2 badge ' . $cssClass . '">' . $status->getLabel() . '</span>';
                     }),
                 (new ActionColumn())
                     ->contentOptions([

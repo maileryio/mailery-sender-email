@@ -9,7 +9,6 @@ use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Sender\Domain\Entity\Domain;
-use Mailery\Sender\Email\Enum\VerificationType;
 
 /**
  * @Cycle\Annotated\Annotation\Entity
@@ -192,7 +191,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyDomain(Domain $domain): self
     {
         if ($this->isSameDomain($domain->getDomain())) {
-            $this->setVerificationType(VerificationType::DOMAIN);
+            $this->setVerificationType(self::VERIFICATION_DOMAIN);
 
             if ($domain->isVerified()) {
                 $this->setStatus(self::STATUS_ACTIVE);
@@ -210,7 +209,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     {
         if ($verificationToken === $this->getVerificationToken()) {
             $this->setStatus(self::STATUS_ACTIVE);
-            $this->setVerificationType(VerificationType::TOKEN);
+            $this->setVerificationType(self::VERIFICATION_TOKEN);
         }
 
         return $this;
