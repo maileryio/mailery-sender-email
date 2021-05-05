@@ -2,10 +2,6 @@
 
 namespace Mailery\Sender\Email\Controller;
 
-use Mailery\Widget\Search\Form\SearchForm;
-use Mailery\Widget\Search\Model\SearchByList;
-use Mailery\Sender\Email\Search\SenderSearchBy;
-use Mailery\Sender\Filter\SenderFilter;
 use Mailery\Sender\Repository\SenderRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -22,7 +18,6 @@ use Mailery\Sender\Email\Service\SenderVerifyService;
 use Yiisoft\Validator\ValidatorInterface;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Yiisoft\Session\Flash\FlashInterface;
-use Mailery\Sender\Email\Model\VerificationType;
 
 class DefaultController
 {
@@ -91,34 +86,6 @@ class DefaultController
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request): Response
-    {
-        $queryParams = $request->getQueryParams();
-        $pageNum = (int) ($queryParams['page'] ?? 1);
-        $searchBy = $queryParams['searchBy'] ?? null;
-        $searchPhrase = $queryParams['search'] ?? null;
-
-        $searchForm = (new SearchForm())
-            ->withSearchByList(new SearchByList([
-                new SenderSearchBy(),
-            ]))
-            ->withSearchBy($searchBy)
-            ->withSearchPhrase($searchPhrase);
-
-        $filter = (new SenderFilter())
-            ->withSearchForm($searchForm);
-
-        $paginator = $this->senderRepo->getFullPaginator($filter)
-            ->withPageSize(self::PAGINATION_INDEX)
-            ->withCurrentPage($pageNum);
-
-        return $this->viewRenderer->render('index', compact('searchForm', 'paginator'));
-    }
-
-    /**
-     * @param Request $request
-     * @return Response
-     */
     public function view(Request $request): Response
     {
         $senderId = $request->getAttribute('id');
@@ -168,7 +135,7 @@ class DefaultController
             return $this->responseFactory->createResponse(404);
         }
 
-        $form = $form->withSender($sender);
+        $form = $form->withEntity($sender);
 
         if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)) {
             $valueObject = SenderValueObject::fromForm($form);

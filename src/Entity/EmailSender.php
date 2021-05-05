@@ -143,23 +143,23 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getEditRouteName(): ?string
+    public function getIndexRouteName(): ?string
     {
-        return '/sender/email/edit';
+        return '/sender/email/index';
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getEditRouteParams(): array
+    public function getIndexRouteParams(): array
     {
-        return ['id' => $this->getId()];
+        return [];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getViewRouteName(): ?string
     {
@@ -167,9 +167,41 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getViewRouteParams(): array
+    {
+        return ['id' => $this->getId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEditRouteName(): ?string
+    {
+        return '/sender/email/edit';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEditRouteParams(): array
+    {
+        return ['id' => $this->getId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDeleteRouteName(): ?string
+    {
+        return '/user/default/delete';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDeleteRouteParams(): array
     {
         return ['id' => $this->getId()];
     }

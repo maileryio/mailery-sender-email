@@ -39,7 +39,7 @@ class SenderForm extends FormModel
      * @param EmailSender $sender
      * @return self
      */
-    public function withSender(EmailSender $sender): self
+    public function withEntity(EmailSender $sender): self
     {
         $new = clone $this;
         $new->name = $sender->getName();
@@ -61,14 +61,6 @@ class SenderForm extends FormModel
             'replyName' => 'Reply to name',
             'replyEmail' => 'Reply to email',
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function formName(): string
-    {
-        return 'SenderForm';
     }
 
     /**
