@@ -1,7 +1,7 @@
 <?php
 
 use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Definition\Reference;
 use Mailery\Sender\Email\Model\EmailType;
 
 return [

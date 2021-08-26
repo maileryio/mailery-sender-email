@@ -70,22 +70,22 @@ class SenderForm extends FormModel
     {
         return [
             'name' => [
-                new RequiredHtmlOptions(new Required()),
-                new HasLengthHtmlOptions((new HasLength())->max(255)),
+                new RequiredHtmlOptions(Required::rule()),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
             ],
             'email' => [
-                new RequiredHtmlOptions(new Required()),
-                new HasLengthHtmlOptions((new HasLength())->max(255)),
-                new EmailHtmlOptions((new Email())),
+                new RequiredHtmlOptions(Required::rule()),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                new EmailHtmlOptions((Email::rule())),
             ],
             'replyName' => [
-                new RequiredHtmlOptions(new Required()),
-                new HasLengthHtmlOptions((new HasLength())->max(255)),
+                new RequiredHtmlOptions(Required::rule()),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
             ],
             'replyEmail' => [
-                new RequiredHtmlOptions(new Required()),
-                new HasLengthHtmlOptions((new HasLength())->max(255)),
-                new EmailHtmlOptions((new Email())),
+                new RequiredHtmlOptions(Required::rule()),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                new EmailHtmlOptions((Email::rule())),
             ],
         ];
     }
