@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mailery\Sender\Email\Service;
 
 use Cycle\ORM\ORMInterface;
-use Cycle\ORM\Transaction;
 use Mailery\Sender\Model\Status;
 use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;

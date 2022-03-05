@@ -140,7 +140,7 @@ class DefaultController
     {
         $body = $request->getParsedBody();
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)) {
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)->isValid()) {
             $valueObject = SenderValueObject::fromForm($form);
             $sender = $this->senderCrudService->create($valueObject);
 
@@ -171,7 +171,7 @@ class DefaultController
 
         $form = $form->withEntity($sender);
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)) {
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)->isValid()) {
             $valueObject = SenderValueObject::fromForm($form);
             $this->senderCrudService->update($sender, $valueObject);
 
