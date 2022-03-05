@@ -9,6 +9,8 @@ use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Sender\Domain\Entity\Domain;
+use Mailery\Sender\Model\Status;
+use Mailery\Sender\Email\Model\VerificationType;
 
 /**
  * @Cycle\Annotated\Annotation\Entity
@@ -195,7 +197,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
      */
     public function getDeleteRouteName(): ?string
     {
-        return '/user/default/delete';
+        return '/sender/default/delete';
     }
 
     /**
@@ -223,10 +225,10 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyDomain(Domain $domain): self
     {
         if ($this->isSameDomain($domain->getDomain())) {
-            $this->setVerificationType(self::VERIFICATION_DOMAIN);
+            $this->setVerificationType(VerificationType::DOMAIN);
 
             if ($domain->isVerified()) {
-                $this->setStatus(self::STATUS_ACTIVE);
+                $this->setStatus(Status::ACTIVE);
             }
         }
 
@@ -240,8 +242,8 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyVerificationToken(string $verificationToken): self
     {
         if ($verificationToken === $this->getVerificationToken()) {
-            $this->setStatus(self::STATUS_ACTIVE);
-            $this->setVerificationType(self::VERIFICATION_TOKEN);
+            $this->setStatus(Status::ACTIVE);
+            $this->setVerificationType(VerificationType::TOKEN);
         }
 
         return $this;

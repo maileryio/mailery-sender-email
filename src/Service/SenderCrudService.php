@@ -6,6 +6,7 @@ namespace Mailery\Sender\Email\Service;
 
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Transaction;
+use Mailery\Sender\Model\Status;
 use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Mailery\Brand\Entity\Brand;
@@ -55,7 +56,7 @@ class SenderCrudService
             ->setEmail($valueObject->getEmail())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
-            ->setStatus(EmailSender::STATUS_PENDING)
+            ->setStatus(Status::PENDING)
         ;
 
         (new EntityWriter($this->orm))->write([$sender]);

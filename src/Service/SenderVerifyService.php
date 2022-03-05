@@ -102,7 +102,7 @@ class SenderVerifyService
             ->withBrand($sender->getBrand())
             ->findOne();
 
-        if ($sender->isSameDomain($domain->getDomain())) {
+        if ($domain !== null && $sender->isSameDomain($domain->getDomain())) {
             return $sender
                 ->verifyDomain($domain)
                 ->isActive();
