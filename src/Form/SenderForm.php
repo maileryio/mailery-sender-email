@@ -51,6 +51,38 @@ class SenderForm extends FormModel
     }
 
     /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReplyName(): ?string
+    {
+        return $this->replyName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReplyEmail(): ?string
+    {
+        return $this->replyEmail;
+    }
+
+    /**
      * @return array
      */
     public function getAttributeLabels(): array
@@ -71,21 +103,21 @@ class SenderForm extends FormModel
         return [
             'name' => [
                 new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
             ],
             'email' => [
                 new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
                 new EmailHtmlOptions((Email::rule())),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
             ],
             'replyName' => [
                 new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
             ],
             'replyEmail' => [
                 new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
                 new EmailHtmlOptions((Email::rule())),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
             ],
         ];
     }

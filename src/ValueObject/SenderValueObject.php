@@ -35,10 +35,10 @@ class SenderValueObject
     public static function fromForm(SenderForm $form): self
     {
         $new = new self();
-        $new->name = $form->getAttributeValue('name');
-        $new->email = $form->getAttributeValue('email');
-        $new->replyName = $form->getAttributeValue('replyName');
-        $new->replyEmail = $form->getAttributeValue('replyEmail');
+        $new->name = $form->getName();
+        $new->email = $form->getEmail();
+        $new->replyName = $form->getReplyName();
+        $new->replyEmail = $form->getReplyEmail();
 
         return $new;
     }
