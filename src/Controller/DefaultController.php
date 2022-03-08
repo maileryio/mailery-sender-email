@@ -124,7 +124,7 @@ class DefaultController
     {
         $senderId = $request->getAttribute('id');
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         return $this->viewRenderer->render('view', compact('sender'));
@@ -166,7 +166,7 @@ class DefaultController
         $body = $request->getParsedBody();
         $senderId = $request->getAttribute('id');
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $form = $form->withEntity($sender);
@@ -198,7 +198,7 @@ class DefaultController
         $verificationToken = $request->getAttribute('token');
 
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         if ($sender->isActive()) {
@@ -212,7 +212,7 @@ class DefaultController
             ->verify($sender);
 
         if (!$result) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $flash->add(
