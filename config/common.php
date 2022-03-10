@@ -4,7 +4,7 @@ use Mailery\Sender\Email\Service\SenderVerifyService;
 use Yiisoft\Mailer\MessageBodyTemplate;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Mailer\MailerInterface;
-use Yiisoft\Factory\Definition\DynamicReference;
+use Yiisoft\Definitions\DynamicReference;
 
 return [
     SenderVerifyService::class => [

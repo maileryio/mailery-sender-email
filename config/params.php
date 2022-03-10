@@ -1,12 +1,12 @@
 <?php
 
 use Yiisoft\Router\UrlGeneratorInterface;
-use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Definitions\Reference;
 use Mailery\Sender\Email\Model\EmailType;
 
 return [
     'yiisoft/yii-cycle' => [
-        'annotated-entity-paths' => [
+        'entity-paths' => [
             '@vendor/maileryio/mailery-sender-email/src/Entity',
         ],
     ],
