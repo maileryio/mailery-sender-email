@@ -3,7 +3,6 @@
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
 use Mailery\Sender\Email\Entity\EmailSender;
-use Mailery\Sender\Email\Module;
 use Mailery\Widget\Dataview\Columns\ActionColumn;
 use Mailery\Widget\Dataview\Columns\DataColumn;
 use Mailery\Widget\Dataview\GridView;
@@ -38,7 +37,7 @@ $this->setTitle('Email addresses');
                     <?= ActivityLogLink::widget()
                         ->tag('b-dropdown-item')
                         ->label('Activity log')
-                        ->module(Module::NAME); ?>
+                        ->group('sender-email'); ?>
                 </b-dropdown>
                 <a class="btn btn-sm btn-primary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/create'); ?>">
                     <?= Icon::widget()->name('plus')->options(['class' => 'mr-1']); ?>
