@@ -5,49 +5,41 @@ declare(strict_types=1);
 namespace Mailery\Sender\Email\Entity;
 
 use Mailery\Sender\Entity\Sender;
-use Mailery\Activity\Log\Entity\LoggableEntityInterface;
-use Mailery\Activity\Log\Entity\LoggableEntityTrait;
-use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Sender\Domain\Entity\Domain;
 use Mailery\Sender\Model\Status;
 use Mailery\Sender\Email\Model\VerificationType;
+use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Inheritance\SingleTable;
+use Mailery\Common\Entity\RoutableEntityInterface;
+use Mailery\Activity\Log\Entity\LoggableEntityInterface;
+use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 
-/**
- * @Cycle\Annotated\Annotation\Entity
- */
+#[Entity(table: 'senders')]
+#[SingleTable(value: EmailSender::class)]
 class EmailSender extends Sender implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;
 
-    /**
-     * @Cycle\Annotated\Annotation\Column(type = "string(255)", nullable = true)
-     * @var string
-     */
-    private $email;
+    #[Column(type: 'string(255)', nullable: true)]
+    private ?string $email = null;
 
-    /**
-     * @Cycle\Annotated\Annotation\Column(type = "string(255)")
-     * @var string
-     */
-    private $replyName;
+    #[Column(type: 'string(255)', nullable: true)]
+    private ?string $replyName = null;
 
-    /**
-     * @Cycle\Annotated\Annotation\Column(type = "string(255)")
-     * @var string
-     */
-    private $replyEmail;
+    #[Column(type: 'string(255)', nullable: true)]
+    private ?string $replyEmail = null;
 
-    /**
-     * @Cycle\Annotated\Annotation\Column(type = "enum(domain, token)", nullable = true)
-     * @var string
-     */
-    private $verificationType;
+    #[Column(type: 'string(255)', nullable: true)]
+    private ?string $verificationType = null;
 
-    /**
-     * @Cycle\Annotated\Annotation\Column(type = "string(255)", nullable = true)
-     * @var string
-     */
-    private $verificationToken;
+    #[Column(type: 'string(255)', nullable: true)]
+    private ?string $verificationToken = null;
+
+    public function __construct()
+    {
+        $this->type = self::class;
+    }
 
     /**
      * @return string

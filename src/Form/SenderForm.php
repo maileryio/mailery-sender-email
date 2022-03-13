@@ -6,9 +6,6 @@ namespace Mailery\Sender\Email\Form;
 
 use Yiisoft\Form\FormModel;
 use Mailery\Sender\Email\Entity\EmailSender;
-use Yiisoft\Form\HtmlOptions\RequiredHtmlOptions;
-use Yiisoft\Form\HtmlOptions\HasLengthHtmlOptions;
-use Yiisoft\Form\HtmlOptions\EmailHtmlOptions;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\Email;
@@ -102,22 +99,22 @@ class SenderForm extends FormModel
     {
         return [
             'name' => [
-                new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
+                Required::rule(),
+                HasLength::rule()->min(3)->max(255),
             ],
             'email' => [
-                new RequiredHtmlOptions(Required::rule()),
-                new EmailHtmlOptions((Email::rule())),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                Required::rule(),
+                Email::rule(),
+                HasLength::rule()->max(255),
             ],
             'replyName' => [
-                new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
+                Required::rule(),
+                HasLength::rule()->min(3)->max(255),
             ],
             'replyEmail' => [
-                new RequiredHtmlOptions(Required::rule()),
-                new EmailHtmlOptions((Email::rule())),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                Required::rule(),
+                Email::rule(),
+                HasLength::rule()->max(255),
             ],
         ];
     }

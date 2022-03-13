@@ -5,24 +5,13 @@ namespace Mailery\Sender\Email\Model;
 class SenderLabel
 {
     /**
-     * @var string|null
-     */
-    private ?string $name = null;
-
-    /**
-     * @var string|null
-     */
-    private ?string $email = null;
-
-    /**
      * @param string|null $name
      * @param string|null $email
      */
-    public function __construct(string $name = null, string $email = null)
-    {
-        $this->name = $name;
-        $this->email = $email;
-    }
+    public function __construct(
+        private ?string $name = null,
+        private ?string $email = null
+    ) {}
 
     /**
      * @return string

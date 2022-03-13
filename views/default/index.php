@@ -37,7 +37,7 @@ $this->setTitle('Email addresses');
                     <?= ActivityLogLink::widget()
                         ->tag('b-dropdown-item')
                         ->label('Activity log')
-                        ->group('sender-email'); ?>
+                        ->group('sender'); ?>
                 </b-dropdown>
                 <a class="btn btn-sm btn-primary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/create'); ?>">
                     <?= Icon::widget()->name('plus')->options(['class' => 'mr-1']); ?>

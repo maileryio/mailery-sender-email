@@ -3,11 +3,22 @@
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Definitions\Reference;
 use Mailery\Sender\Email\Model\EmailType;
+use Mailery\Sender\Email\Entity\EmailSender;
 
 return [
     'yiisoft/yii-cycle' => [
         'entity-paths' => [
             '@vendor/maileryio/mailery-sender-email/src/Entity',
+        ],
+    ],
+
+    'maileryio/mailery-activity-log' => [
+        'entity-groups' => [
+            'sender' => [
+                'entities' => [
+                    EmailSender::class,
+                ],
+            ],
         ],
     ],
 

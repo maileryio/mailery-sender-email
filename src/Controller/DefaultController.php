@@ -23,68 +23,36 @@ use Yiisoft\Validator\ValidatorInterface;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
 use Mailery\Sender\Model\SenderTypeList;
 use Yiisoft\Session\Flash\FlashInterface;
+use Yiisoft\Router\CurrentRoute;
 
 class DefaultController
 {
     private const PAGINATION_INDEX = 10;
 
     /**
-     * @var ViewRenderer
-     */
-    private ViewRenderer $viewRenderer;
-
-    /**
-     * @var ResponseFactory
-     */
-    private ResponseFactory $responseFactory;
-
-    /**
-     * @var UrlGenerator
-     */
-    private UrlGenerator $urlGenerator;
-
-    /**
-     * @var SenderRepository
-     */
-    private SenderRepository $senderRepo;
-
-    /**
-     * @var SenderCrudService
-     */
-    private SenderCrudService $senderCrudService;
-
-    /**
-     * @var SenderVerifyService
-     */
-    private SenderVerifyService $senderVerifyService;
-
-    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
-     * @param BrandLocatorInterface $brandLocator
      * @param UrlGenerator $urlGenerator
      * @param SenderRepository $senderRepo
      * @param SenderCrudService $senderCrudService
      * @param SenderVerifyService $senderVerifyService
+     * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
-        ViewRenderer $viewRenderer,
-        ResponseFactory $responseFactory,
-        BrandLocatorInterface $brandLocator,
-        UrlGenerator $urlGenerator,
-        SenderRepository $senderRepo,
-        SenderCrudService $senderCrudService,
-        SenderVerifyService $senderVerifyService
+        private ViewRenderer $viewRenderer,
+        private ResponseFactory $responseFactory,
+        private UrlGenerator $urlGenerator,
+        private SenderRepository $senderRepo,
+        private SenderCrudService $senderCrudService,
+        private SenderVerifyService $senderVerifyService,
+        BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
             ->withViewPath(dirname(dirname(__DIR__)) . '/views');
 
-        $this->responseFactory = $responseFactory;
-        $this->urlGenerator = $urlGenerator;
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->senderCrudService = $senderCrudService->withBrand($brandLocator->getBrand());
-        $this->senderVerifyService = $senderVerifyService;
     }
 
     /**
@@ -117,12 +85,12 @@ class DefaultController
     }
 
     /**
-     * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @return Response
      */
-    public function view(Request $request): Response
+    public function view(CurrentRoute $currentRoute): Response
     {
-        $senderId = $request->getAttribute('id');
+        $senderId = $currentRoute->getArgument('id');
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
@@ -156,15 +124,16 @@ class DefaultController
 
     /**
      * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @param ValidatorInterface $validator
      * @param FlashInterface $flash
      * @param SenderForm $form
      * @return Response
      */
-    public function edit(Request $request, ValidatorInterface $validator, FlashInterface $flash, SenderForm $form): Response
+    public function edit(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, SenderForm $form): Response
     {
         $body = $request->getParsedBody();
-        $senderId = $request->getAttribute('id');
+        $senderId = $currentRoute->getArgument('id');
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
@@ -188,14 +157,14 @@ class DefaultController
     }
 
     /**
-     * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @param FlashInterface $flash
      * @return Response
      */
-    public function verify(Request $request, FlashInterface $flash): Response
+    public function verify(CurrentRoute $currentRoute, FlashInterface $flash): Response
     {
-        $senderId = $request->getAttribute('id');
-        $verificationToken = $request->getAttribute('token');
+        $senderId = $currentRoute->getArgument('id');
+        $verificationToken = $currentRoute->getArgument('token');
 
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);

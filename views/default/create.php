@@ -4,7 +4,7 @@
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
 /** @var Yiisoft\View\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Sender\Email\Form\SenderForm $form */
+/** @var Yiisoft\Form\FormModelInterface $form */
 /** @var string $csrf */
 
 $this->setTitle('New sender');

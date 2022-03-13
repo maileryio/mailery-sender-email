@@ -14,26 +14,6 @@ use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 class SenderVerifyService
 {
     /**
-     * @var ORMInterface
-     */
-    private ORMInterface $orm;
-
-    /**
-     * @var MailerInterface
-     */
-    private MailerInterface $mailer;
-
-    /**
-     * @var GeneralSettingGroup
-     */
-    private GeneralSettingGroup $settingGroup;
-
-    /**
-     * @var DomainRepository
-     */
-    private DomainRepository $domainRepo;
-
-    /**
      * @var string|null
      */
     private ?string $verificationToken = null;
@@ -45,16 +25,11 @@ class SenderVerifyService
      * @param DomainRepository $domainRepo
      */
     public function __construct(
-        ORMInterface $orm,
-        MailerInterface $mailer,
-        GeneralSettingGroup $settingGroup,
-        DomainRepository $domainRepo
-    ) {
-        $this->orm = $orm;
-        $this->mailer = $mailer;
-        $this->settingGroup = $settingGroup;
-        $this->domainRepo = $domainRepo;
-    }
+        private ORMInterface $orm,
+        private MailerInterface $mailer,
+        private GeneralSettingGroup $settingGroup,
+        private DomainRepository $domainRepo
+    ) {}
 
     /**
      * @param string $verificationToken

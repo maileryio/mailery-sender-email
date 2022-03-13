@@ -12,11 +12,6 @@ class VerificationType
     public const TOKEN = 'token';
 
     /**
-     * @var string
-     */
-    private string $value;
-
-    /**
      * @var TranslatorInterface|null
      */
     private ?TranslatorInterface $translator = null;
@@ -24,8 +19,9 @@ class VerificationType
     /**
      * @param string $value
      */
-    public function __construct(string $value)
-    {
+    public function __construct(
+        private string $value
+    ) {
         if (!isset($this->getLabels()[$value])) {
             throw new InvalidArgumentException();
         }

@@ -14,11 +14,6 @@ use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 class SenderCrudService
 {
     /**
-     * @var ORMInterface
-     */
-    private ORMInterface $orm;
-
-    /**
      * @var Brand
      */
     private Brand $brand;
@@ -26,10 +21,9 @@ class SenderCrudService
     /**
      * @param ORMInterface $orm
      */
-    public function __construct(ORMInterface $orm)
-    {
-        $this->orm = $orm;
-    }
+    public function __construct(
+        private ORMInterface $orm
+    ) {}
 
     /**
      * @param Brand $brand
