@@ -5,7 +5,7 @@
 /** @var Yiisoft\View\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Yiisoft\Form\FormModelInterface $form */
-/** @var string $csrf */
+/** @var Yiisoft\Yii\View\Csrf $csrf */
 
 $this->setTitle('New sender');
 

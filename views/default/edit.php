@@ -9,7 +9,7 @@ use Mailery\Web\Widget\FlashMessage;
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var Mailery\Sender\Email\Form\SenderForm $form */
-/** @var string $csrf */
+/** @var Yiisoft\Yii\View\Csrf $csrf */
 
 $this->setTitle('Edit Sender #' . $sender->getId());
 
