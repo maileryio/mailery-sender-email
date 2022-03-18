@@ -10,6 +10,7 @@ use Mailery\Common\Setting\GeneralSettingGroup;
 use Yiisoft\Mailer\MailerInterface;
 use Cycle\ORM\ORMInterface;
 use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
+use Mailery\Sender\Email\Model\VerificationType;
 
 class SenderVerifyService
 {
@@ -45,56 +46,13 @@ class SenderVerifyService
 
     /**
      * @param EmailSender $sender
-     * @return bool
-     */
-    public function verify(EmailSender $sender): bool
-    {
-        $result = $this->wrapVerify($sender);
-
-        (new EntityWriter($this->orm))->write([$sender]);
-
-        return $result;
-    }
-
-    /**
-     * @param EmailSender $sender
-     * @return bool
-     */
-    private function wrapVerify(EmailSender $sender): bool
-    {
-        if ($sender->isActive()) {
-            return true;
-        }
-
-        if ($this->verificationToken !== null) {
-            return $sender
-                ->verifyVerificationToken($this->verificationToken)
-                ->isActive();
-        }
-
-        /** @var Domain $domain */
-        $domain = $this->domainRepo
-            ->withBrand($sender->getBrand())
-            ->findOne();
-
-        if ($domain !== null && $sender->isSameDomain($domain->getDomain())) {
-            return $sender
-                ->verifyDomain($domain)
-                ->isActive();
-        }
-
-        $this->sendVerificationEmail($sender);
-
-        return $sender->isActive();
-    }
-
-    /**
-     * @param EmailSender $sender
      * @return void
      */
-    private function sendVerificationEmail(EmailSender $sender): void
+    public function sendVerificationEmail(EmailSender $sender): void
     {
-        $sender->setVerificationToken(
+        $sender
+            ->setVerificationType(VerificationType::asToken())
+            ->setVerificationToken(
             (new VerificationToken())
                 ->withLength(32)
                 ->generate()
@@ -112,5 +70,77 @@ class SenderVerifyService
         ;
 
         $this->mailer->send($message);
+
+        (new EntityWriter($this->orm))->write([$sender]);
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return bool
+     */
+    public function verify(EmailSender $sender): bool
+    {
+        $result = $this->verifyByDomain($sender);
+
+        if (!$result) {
+            $result = $this->verifyByEmail($sender);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return bool
+     */
+    private function verifyByEmail(EmailSender $sender): bool
+    {
+        if ($sender->isActive()) {
+            return true;
+        }
+
+        if ($this->verificationToken === null) {
+            return false;
+        }
+
+        $result = $sender
+            ->verifyVerificationToken($this->verificationToken)
+            ->isActive();
+
+        (new EntityWriter($this->orm))->write([$sender]);
+
+        return $result;
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return bool
+     */
+    private function verifyByDomain(EmailSender $sender): bool
+    {
+        if ($sender->isActive()) {
+            return true;
+        }
+
+        $result = (function (EmailSender $sender): bool {
+            $domains = $this->domainRepo
+                ->withBrand($sender->getBrand())
+                ->findAll();
+
+            foreach ($domains as $domain) {
+                /** @var Domain $domain */
+                if ($sender->isSameDomain($domain->getDomain())) {
+                    return $sender
+                        ->verifyDomain($domain)
+                        ->isActive();
+                }
+            }
+
+            return false;
+        })($sender);
+
+        (new EntityWriter($this->orm))->write([$sender]);
+
+        return $result;
     }
 }

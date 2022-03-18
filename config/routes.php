@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
 use Mailery\Sender\Email\Controller\DefaultController;
+use Mailery\Sender\Email\Controller\VerifyController;
 
 return [
     Group::create('/brand/{brandId:\d+}')
@@ -22,9 +23,12 @@ return [
             Route::methods(['GET', 'POST'], '/sender/email/edit/{id:\d+}')
                 ->name('/sender/email/edit')
                 ->action([DefaultController::class, 'edit']),
+            Route::delete('/sender/email/delete/{id:\d+}')
+                ->name('/sender/email/delete')
+                ->action([DefaultController::class, 'delete']),
 
             Route::get('/sender/email/verify/{id:\d+}/{token:\w+}')
                 ->name('/sender/email/verify')
-                ->action([DefaultController::class, 'verify'])
+                ->action([VerifyController::class, 'index'])
     )
 ];

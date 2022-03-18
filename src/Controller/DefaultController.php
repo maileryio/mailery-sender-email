@@ -112,7 +112,9 @@ class DefaultController
             $valueObject = SenderValueObject::fromForm($form);
             $sender = $this->senderCrudService->create($valueObject);
 
-            $this->senderVerifyService->verify($sender);
+            if (!$this->senderVerifyService->verify($sender)) {
+                $this->senderVerifyService->sendVerificationEmail($sender);
+            }
 
             return $this->responseFactory
                 ->createResponse(Status::FOUND)
@@ -158,42 +160,21 @@ class DefaultController
 
     /**
      * @param CurrentRoute $currentRoute
-     * @param FlashInterface $flash
+     * @param UrlGenerator $urlGenerator
      * @return Response
      */
-    public function verify(CurrentRoute $currentRoute, FlashInterface $flash): Response
+    public function delete(CurrentRoute $currentRoute, UrlGenerator $urlGenerator): Response
     {
         $senderId = $currentRoute->getArgument('id');
-        $verificationToken = $currentRoute->getArgument('token');
-
         if (empty($senderId) || ($sender = $this->senderRepo->findByPK($senderId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
-        if ($sender->isActive()) {
-            return $this->responseFactory
-                ->createResponse(Status::FOUND)
-                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/index'));
-        }
-
-        $result = $this->senderVerifyService
-            ->withVerificationToken($verificationToken)
-            ->verify($sender);
-
-        if (!$result) {
-            return $this->responseFactory->createResponse(Status::NOT_FOUND);
-        }
-
-        $flash->add(
-            'success',
-            [
-                'body' => 'Email have been verified!',
-            ],
-            true
-        );
+        $this->senderCrudService->delete($sender);
 
         return $this->responseFactory
-            ->createResponse(Status::FOUND)
-            ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]));
+            ->createResponse(Status::SEE_OTHER)
+            ->withHeader(Header::LOCATION, $urlGenerator->generate('/sender/default/index'));
     }
+
 }

@@ -89,23 +89,12 @@ $this->setTitle('Email addresses');
                 (new DataColumn())
                     ->header('Verification')
                     ->content(function (EmailSender $data, int $index) {
-                        return VerificationType::fromEntity($data)->getLabel();
+                        return $data->getVerificationType()->getLabel();
                     }),
                 (new DataColumn())
                     ->header('Status')
                     ->content(function (EmailSender $data, int $index) {
-                        $status = Status::fromEntity($data);
-                        if ($data->isPending()) {
-                            $cssClass = 'badge-warning';
-                        } else if ($data->isActive()) {
-                            $cssClass = 'badge-success';
-                        } else if ($data->isInactive()) {
-                            $cssClass = 'badge-danger';
-                        } else {
-                            $cssClass = 'badge-secondary';
-                        }
-
-                        return '<span class="ml-2 badge ' . $cssClass . '">' . $status->getLabel() . '</span>';
+                        return '<span class="ml-2 badge ' . $data->getStatus()->getCssClass() . '">' . $data->getStatus()->getLabel() . '</span>';
                     }),
                 (new ActionColumn())
                     ->contentOptions([

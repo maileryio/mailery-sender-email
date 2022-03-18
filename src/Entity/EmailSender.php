@@ -30,8 +30,8 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     #[Column(type: 'string(255)', nullable: true)]
     private ?string $replyEmail = null;
 
-    #[Column(type: 'string(255)', nullable: true)]
-    private ?string $verificationType = null;
+    #[Column(type: 'string(255)', typecast: VerificationType::class, nullable: true)]
+    private ?VerificationType $verificationType = null;
 
     #[Column(type: 'string(255)', nullable: true)]
     private ?string $verificationToken = null;
@@ -99,18 +99,18 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
-     * @return string|null
+     * @return VerificationType|null
      */
-    public function getVerificationType(): ?string
+    public function getVerificationType(): ?VerificationType
     {
         return $this->verificationType;
     }
 
     /**
-     * @param string $verificationType
+     * @param VerificationType $verificationType
      * @return self
      */
-    public function setVerificationType(string $verificationType): self
+    public function setVerificationType(VerificationType $verificationType): self
     {
         $this->verificationType = $verificationType;
 
@@ -189,7 +189,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
      */
     public function getDeleteRouteName(): ?string
     {
-        return '/sender/default/delete';
+        return '/sender/email/delete';
     }
 
     /**
@@ -216,12 +216,9 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
      */
     public function verifyDomain(Domain $domain): self
     {
-        if ($this->isSameDomain($domain->getDomain())) {
-            $this->setVerificationType(VerificationType::DOMAIN);
-
-            if ($domain->isVerified()) {
-                $this->setStatus(Status::ACTIVE);
-            }
+        if ($domain->isVerified() && $this->isSameDomain($domain->getDomain())) {
+            $this->setStatus(Status::asActive())
+                ->setVerificationType(VerificationType::asDomain());
         }
 
         return $this;
@@ -234,8 +231,8 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyVerificationToken(string $verificationToken): self
     {
         if ($verificationToken === $this->getVerificationToken()) {
-            $this->setStatus(Status::ACTIVE);
-            $this->setVerificationType(VerificationType::TOKEN);
+            $this->setStatus(Status::asActive())
+                ->setVerificationType(VerificationType::asToken());
         }
 
         return $this;

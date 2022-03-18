@@ -2,14 +2,12 @@
 
 namespace Mailery\Sender\Email\Model;
 
-use InvalidArgumentException;
-use Mailery\Sender\Email\Entity\EmailSender;
 use Yiisoft\Translator\TranslatorInterface;
 
 class VerificationType
 {
-    public const DOMAIN = 'domain';
-    public const TOKEN = 'token';
+    private const DOMAIN = 'domain';
+    private const TOKEN = 'token';
 
     /**
      * @var TranslatorInterface|null
@@ -21,23 +19,23 @@ class VerificationType
      */
     public function __construct(
         private string $value
-    ) {
-        if (!isset($this->getLabels()[$value])) {
-            throw new InvalidArgumentException();
-        }
-        $this->value = $value;
+    ) {}
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->value;
     }
 
     /**
-     * @param TranslatorInterface $translator
-     * @return self
+     * @param string $value
+     * @return static
      */
-    public function withTranslator(TranslatorInterface $translator): self
+    public static function typecast(string $value): static
     {
-        $new = clone $this;
-        $new->translator = $translator;
-
-        return $new;
+        return new static($value);
     }
 
     /**
@@ -57,12 +55,15 @@ class VerificationType
     }
 
     /**
-     * @param EmailSender $entity
+     * @param TranslatorInterface $translator
      * @return self
      */
-    public static function fromEntity(EmailSender $entity): self
+    public function withTranslator(TranslatorInterface $translator): self
     {
-        return new self($entity->getVerificationType());
+        $new = clone $this;
+        $new->translator = $translator;
+
+        return $new;
     }
 
     /**
@@ -78,29 +79,16 @@ class VerificationType
      */
     public function getLabel(): string
     {
-        return $this->getLabels()[$this->value] ?? '';
-    }
+        $fnTranslate = function (string $message) {
+            if ($this->translator !== null) {
+                return $this->translator->translate($message);
+            }
+            return $message;
+        };
 
-    /**
-     * @return array
-     */
-    public function getLabels() : array
-    {
         return [
-            self::DOMAIN => $this->translate('Domain verification'),
-            self::TOKEN => $this->translate('Email confirmation'),
-        ];
-    }
-
-    /**
-     * @param string $message
-     * @return string
-     */
-    private function translate(string $message): string
-    {
-        if ($this->translator !== null) {
-            return $this->translator->translate($message);
-        }
-        return $message;
+            self::DOMAIN => $fnTranslate('Domain verification'),
+            self::TOKEN => $fnTranslate('Email confirmation'),
+        ][$this->value] ?? 'Unknown';
     }
 }

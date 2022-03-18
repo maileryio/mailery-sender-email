@@ -49,7 +49,7 @@ class SenderCrudService
             ->setEmail($valueObject->getEmail())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
-            ->setStatus(Status::PENDING)
+            ->setStatus(Status::asPending())
         ;
 
         (new EntityWriter($this->orm))->write([$sender]);
@@ -73,5 +73,16 @@ class SenderCrudService
         (new EntityWriter($this->orm))->write([$sender]);
 
         return $sender;
+    }
+
+    /**
+     * @param EmailSender $sender
+     * @return bool
+     */
+    public function delete(EmailSender $sender): bool
+    {
+        (new EntityWriter($this->orm))->delete([$sender]);
+
+        return true;
     }
 }
