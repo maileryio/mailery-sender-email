@@ -15,13 +15,13 @@ use Yiisoft\Form\Widget\Form;
                 ->id('sender-form')
                 ->begin(); ?>
 
-        <?= $field->text($form, 'name')
-                ->autofocus(); ?>
+        <?= $field->text($form, 'name')->autofocus(); ?>
 
         <?= $field->email($form, 'email')
                 ->attributes(['disabled' => !empty($sender)]); ?>
 
         <?= $field->text($form, 'replyName'); ?>
+
         <?= $field->email($form, 'replyEmail'); ?>
 
         <?= $field->submitButton()
