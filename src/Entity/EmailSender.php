@@ -6,7 +6,7 @@ namespace Mailery\Sender\Email\Entity;
 
 use Mailery\Sender\Entity\Sender;
 use Mailery\Sender\Domain\Entity\Domain;
-use Mailery\Sender\Model\Status;
+use Mailery\Sender\Field\SenderStatus;
 use Mailery\Sender\Email\Model\VerificationType;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
@@ -217,7 +217,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyDomain(Domain $domain): self
     {
         if ($domain->isVerified() && $this->isSameDomain($domain->getDomain())) {
-            $this->setStatus(Status::asActive())
+            $this->setStatus(SenderStatus::asActive())
                 ->setVerificationType(VerificationType::asDomain());
         }
 
@@ -231,7 +231,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function verifyVerificationToken(string $verificationToken): self
     {
         if ($verificationToken === $this->getVerificationToken()) {
-            $this->setStatus(Status::asActive())
+            $this->setStatus(SenderStatus::asActive())
                 ->setVerificationType(VerificationType::asToken());
         }
 

@@ -9,8 +9,6 @@ use Mailery\Widget\Dataview\GridView;
 use Mailery\Widget\Dataview\GridView\LinkPager;
 use Mailery\Widget\Link\Link;
 use Mailery\Widget\Search\Widget\SearchWidget;
-use Mailery\Sender\Model\Status;
-use Mailery\Sender\Email\Model\VerificationType;
 use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
