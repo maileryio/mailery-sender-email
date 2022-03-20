@@ -95,7 +95,7 @@ class SenderVerifyService
      */
     private function verifyByEmail(EmailSender $sender): bool
     {
-        if ($sender->isActive()) {
+        if ($sender->getStatus()->isActive()) {
             return true;
         }
 
@@ -105,6 +105,7 @@ class SenderVerifyService
 
         $result = $sender
             ->verifyVerificationToken($this->verificationToken)
+            ->getStatus()
             ->isActive();
 
         (new EntityWriter($this->orm))->write([$sender]);
@@ -118,7 +119,7 @@ class SenderVerifyService
      */
     private function verifyByDomain(EmailSender $sender): bool
     {
-        if ($sender->isActive()) {
+        if ($sender->getStatus()->isActive()) {
             return true;
         }
 
@@ -132,6 +133,7 @@ class SenderVerifyService
                 if ($sender->isSameDomain($domain->getDomain())) {
                     return $sender
                         ->verifyDomain($domain)
+                        ->getStatus()
                         ->isActive();
                 }
             }

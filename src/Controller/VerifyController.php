@@ -46,7 +46,7 @@ class VerifyController
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
-        if ($sender->isActive()) {
+        if ($sender->getStatus()->isActive()) {
             return $this->responseFactory
                 ->createResponse(Status::FOUND)
                 ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/index'));
