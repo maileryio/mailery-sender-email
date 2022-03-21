@@ -99,15 +99,7 @@ $this->setTitle($sender->getName());
                 [
                     'label' => 'Status',
                     'value' => function (EmailSender $data, $index) {
-                        if ($data->isPending()) {
-                            return '<span class="ml-2 badge badge-warning">pending</span>';
-                        } else if ($data->isActive()) {
-                            return '<span class="ml-2 badge badge-success">active</span>';
-                        } else if ($data->isInactive()) {
-                            return '<span class="ml-2 badge badge-danger">inactive</span>';
-                        } else {
-                            return '<span class="ml-2 badge badge-secondary">unknown</span>';
-                        }
+                        return '<span class="ml-2 badge ' . $data->getStatus()->getCssClass() . '">' . $data->getStatus()->getLabel() . '</span>';
                     },
                 ],
             ]);

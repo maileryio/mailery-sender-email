@@ -11,6 +11,7 @@ use Mailery\Sender\Email\Model\VerificationType;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Inheritance\SingleTable;
+use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
@@ -35,6 +36,9 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
 
     #[Column(type: 'string(255)', nullable: true)]
     private ?string $verificationToken = null;
+
+    #[BelongsTo(target: Domain::class, nullable: true)]
+    private ?Domain $domain = null;
 
     public function __construct()
     {
@@ -137,6 +141,25 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
+     * @return Domain|null
+     */
+    public function getDomain(): ?Domain
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @param Domain $domain
+     * @return self
+     */
+    public function setDomain(Domain $domain): self
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getIndexRouteName(): ?string
@@ -218,7 +241,8 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     {
         if ($domain->isVerified() && $this->isSameDomain($domain->getDomain())) {
             $this->setStatus(SenderStatus::asActive())
-                ->setVerificationType(VerificationType::asDomain());
+                ->setVerificationType(VerificationType::asDomain())
+                ->setDomain($domain);
         }
 
         return $this;
