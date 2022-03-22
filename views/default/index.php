@@ -9,7 +9,7 @@ use Yiisoft\Html\Html;
 use Yiisoft\Yii\DataView\GridView;
 
 /** @var Yiisoft\Yii\WebView $this */
-/** @var Mailery\Sender\Email\Model\VerificationType $verificationType */
+/** @var Mailery\Sender\Email\Field\VerificationType $verificationType */
 /** @var Mailery\Widget\Search\Form\SearchForm $searchForm */
 /** @var Yiisoft\Aliases\Aliases $aliases */
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
@@ -77,7 +77,7 @@ $this->setTitle('Email addresses');
                 ],
                 [
                     'label()' => ['Verification'],
-                    'value()' => [fn (EmailSender $model) => $model->getVerificationType()->getLabel()],
+                    'value()' => [fn (EmailSender $model) => $model->getVerification()->getType()->getLabel()],
                 ],
                 [
                     'label()' => ['Status'],

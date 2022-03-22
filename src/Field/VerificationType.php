@@ -1,6 +1,6 @@
 <?php
 
-namespace Mailery\Sender\Email\Model;
+namespace Mailery\Sender\Email\Field;
 
 use Yiisoft\Translator\TranslatorInterface;
 
@@ -90,5 +90,21 @@ class VerificationType
             self::DOMAIN => $fnTranslate('Domain verification'),
             self::TOKEN => $fnTranslate('Email confirmation'),
         ][$this->value] ?? 'Unknown';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDomain(): bool
+    {
+        return $this->getValue() === self::DOMAIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isToken(): bool
+    {
+        return $this->getValue() === self::TOKEN;
     }
 }

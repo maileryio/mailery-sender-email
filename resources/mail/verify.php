@@ -2,15 +2,15 @@
 
 use Yiisoft\Html\Html;
 
-/** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
+/** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\View\WebView $this */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 
-$verifyUrl = $urlGenerator->generateAbsolute(
+$verifyUrl = $url->generateAbsolute(
     '/sender/email/verify',
     [
         'id' => $sender->getId(),
-        'token' => $sender->getVerificationToken(),
+        'token' => $sender->getVerification()->getToken(),
     ]
 );
 ?>

@@ -24,14 +24,6 @@ class VerificationToken
     /**
      * @return string
      */
-    public function __toString(): string
-    {
-        return $this->generate();
-    }
-
-    /**
-     * @return string
-     */
     public function generate(): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

@@ -9,6 +9,10 @@ use Mailery\Sender\Email\Entity\EmailSender;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\Email;
+use Yiisoft\Validator\Rule\Callback;
+use Yiisoft\Validator\Result;
+use Mailery\Sender\Repository\SenderRepository;
+use Mailery\Brand\BrandLocatorInterface as BrandLocator;
 
 class SenderForm extends FormModel
 {
@@ -33,12 +37,30 @@ class SenderForm extends FormModel
     private ?string $replyEmail = null;
 
     /**
+     * @var EmailSender|null
+     */
+    private ?EmailSender $sender = null;
+
+    /**
+     * @param SenderRepository $senderRepo
+     * @param BrandLocator $brandLocator
+     */
+    public function __construct(
+        private SenderRepository $senderRepo,
+        BrandLocator $brandLocator
+    ) {
+        $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
+        parent::__construct();
+    }
+
+    /**
      * @param EmailSender $sender
      * @return self
      */
     public function withEntity(EmailSender $sender): self
     {
         $new = clone $this;
+        $new->sender = $sender;
         $new->name = $sender->getName();
         $new->email = $sender->getEmail();
         $new->replyName = $sender->getReplyName();
@@ -101,11 +123,31 @@ class SenderForm extends FormModel
             'name' => [
                 Required::rule(),
                 HasLength::rule()->min(3)->max(255),
+                Callback::rule(function ($value) {
+                    $result = new Result();
+                    $record = $this->senderRepo->findByAttribute('name', $value, $this->sender);
+
+                    if ($record !== null) {
+                        $result->addError('Sender with this name already exists.');
+                    }
+
+                    return $result;
+                }),
             ],
             'email' => [
                 Required::rule(),
                 Email::rule(),
                 HasLength::rule()->max(255),
+                Callback::rule(function ($value) {
+                    $result = new Result();
+                    $record = $this->senderRepo->findByAttribute('email', $value, $this->sender);
+
+                    if ($record !== null) {
+                        $result->addError('Sender with this email already exists.');
+                    }
+
+                    return $result;
+                }),
             ],
             'replyName' => [
                 Required::rule(),

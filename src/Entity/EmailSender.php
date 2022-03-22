@@ -6,10 +6,10 @@ namespace Mailery\Sender\Email\Entity;
 
 use Mailery\Sender\Entity\Sender;
 use Mailery\Sender\Domain\Entity\Domain;
-use Mailery\Sender\Field\SenderStatus;
-use Mailery\Sender\Email\Model\VerificationType;
+use Mailery\Sender\Email\Entity\Embedded\Verification;
 use Cycle\Annotated\Annotation\Entity;
 use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Relation\Embedded;
 use Cycle\Annotated\Annotation\Inheritance\SingleTable;
 use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Mailery\Common\Entity\RoutableEntityInterface;
@@ -31,11 +31,8 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     #[Column(type: 'string(255)', nullable: true)]
     private ?string $replyEmail = null;
 
-    #[Column(type: 'string(255)', typecast: VerificationType::class, nullable: true)]
-    private ?VerificationType $verificationType = null;
-
-    #[Column(type: 'string(255)', nullable: true)]
-    private ?string $verificationToken = null;
+    #[Embedded(target: Verification::class, prefix: 'verification_')]
+    public Verification $verification;
 
     #[BelongsTo(target: Domain::class, nullable: true)]
     private ?Domain $domain = null;
@@ -43,6 +40,7 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     public function __construct()
     {
         $this->type = self::class;
+        $this->verification = new Verification();
     }
 
     /**
@@ -103,39 +101,20 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
     }
 
     /**
-     * @return VerificationType|null
+     * @return Verification
      */
-    public function getVerificationType(): ?VerificationType
+    public function getVerification(): Verification
     {
-        return $this->verificationType;
+        return $this->verification;
     }
 
     /**
-     * @param VerificationType $verificationType
+     * @param Verification $verification
      * @return self
      */
-    public function setVerificationType(VerificationType $verificationType): self
+    public function setVerification(Verification $verification): self
     {
-        $this->verificationType = $verificationType;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getVerificationToken(): ?string
-    {
-        return $this->verificationToken;
-    }
-
-    /**
-     * @param string $verificationToken
-     * @return self
-     */
-    public function setVerificationToken(string $verificationToken): self
-    {
-        $this->verificationToken = $verificationToken;
+        $this->verification = $verification;
 
         return $this;
     }
@@ -233,32 +212,4 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
         return $emailDomain === $domain;
     }
 
-    /**
-     * @param Domain $domain
-     * @return self
-     */
-    public function verifyDomain(Domain $domain): self
-    {
-        if ($domain->isVerified() && $this->isSameDomain($domain->getDomain())) {
-            $this->setStatus(SenderStatus::asActive())
-                ->setVerificationType(VerificationType::asDomain())
-                ->setDomain($domain);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $verificationToken
-     * @return self
-     */
-    public function verifyVerificationToken(string $verificationToken): self
-    {
-        if ($verificationToken === $this->getVerificationToken()) {
-            $this->setStatus(SenderStatus::asActive())
-                ->setVerificationType(VerificationType::asToken());
-        }
-
-        return $this;
-    }
 }

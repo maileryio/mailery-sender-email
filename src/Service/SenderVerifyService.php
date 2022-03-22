@@ -5,12 +5,13 @@ namespace Mailery\Sender\Email\Service;
 use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Domain\Entity\Domain;
 use Mailery\Sender\Domain\Repository\DomainRepository;
+use Mailery\Sender\Email\Entity\Embedded\Verification;
 use Mailery\Sender\Email\Model\VerificationToken;
 use Mailery\Common\Setting\GeneralSettingGroup;
 use Yiisoft\Mailer\MailerInterface;
 use Cycle\ORM\ORMInterface;
 use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
-use Mailery\Sender\Email\Model\VerificationType;
+use Mailery\Sender\Field\SenderStatus;
 
 class SenderVerifyService
 {
@@ -50,12 +51,9 @@ class SenderVerifyService
      */
     public function sendVerificationEmail(EmailSender $sender): void
     {
-        $sender
-            ->setVerificationType(VerificationType::asToken())
-            ->setVerificationToken(
-            (new VerificationToken())
-                ->withLength(32)
-                ->generate()
+        $sender->setVerification(
+            Verification::asToken()
+                ->setToken((new VerificationToken())->withLength(32)->generate())
         );
 
         $message = $this->mailer->compose(
@@ -80,69 +78,41 @@ class SenderVerifyService
      */
     public function verify(EmailSender $sender): bool
     {
-        $result = $this->verifyByDomain($sender);
-
-        if (!$result) {
-            $result = $this->verifyByEmail($sender);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param EmailSender $sender
-     * @return bool
-     */
-    private function verifyByEmail(EmailSender $sender): bool
-    {
         if ($sender->getStatus()->isActive()) {
             return true;
         }
 
-        if ($this->verificationToken === null) {
-            return false;
+        if ($this->verificationToken !== null
+            && ($verification = $sender->getVerification()) !== null
+            && $verification->getType()->isToken()
+            && $verification->getToken() === $this->verificationToken
+        ) {
+            $sender->setStatus(SenderStatus::asActive());
         }
 
-        $result = $sender
-            ->verifyVerificationToken($this->verificationToken)
-            ->getStatus()
-            ->isActive();
-
-        (new EntityWriter($this->orm))->write([$sender]);
-
-        return $result;
-    }
-
-    /**
-     * @param EmailSender $sender
-     * @return bool
-     */
-    private function verifyByDomain(EmailSender $sender): bool
-    {
-        if ($sender->getStatus()->isActive()) {
-            return true;
-        }
-
-        $result = (function (EmailSender $sender): bool {
+        if (!$sender->getStatus()->isActive()) {
             $domains = $this->domainRepo
                 ->withBrand($sender->getBrand())
                 ->findAll();
 
             foreach ($domains as $domain) {
                 /** @var Domain $domain */
-                if ($sender->isSameDomain($domain->getDomain())) {
-                    return $sender
-                        ->verifyDomain($domain)
-                        ->getStatus()
-                        ->isActive();
+                if (!$domain->isVerified()
+                    || !$sender->isSameDomain($domain->getDomain())
+                ) {
+                    continue;
                 }
-            }
 
-            return false;
-        })($sender);
+                $sender->setStatus(SenderStatus::asActive())
+                    ->setVerification(Verification::asDomain());
+
+                break;
+            }
+        }
 
         (new EntityWriter($this->orm))->write([$sender]);
 
-        return $result;
+        return $sender->getStatus()->isActive();
     }
+
 }
