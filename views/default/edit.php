@@ -4,7 +4,7 @@ use Mailery\Icon\Icon;
 use Mailery\Web\Widget\FlashMessage;
 
 /** @var Yiisoft\Form\Widget\Field $field */
-/** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
+/** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\View\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
@@ -18,11 +18,11 @@ $this->setTitle('Edit Sender #' . $sender->getId());
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
             <h1 class="h3">Edit sender #<?= $sender->getId(); ?></h1>
             <div class="btn-toolbar float-right">
-                <a class="btn btn-sm btn-info mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/view', ['id' => $sender->getId()]); ?>">
+                <a class="btn btn-sm btn-info mx-sm-1 mb-2" href="<?= $url->generate('/sender/email/view', ['id' => $sender->getId()]); ?>">
                     <?= Icon::widget()->name('eye')->options(['class' => 'mr-1']); ?>
                     View
                 </a>
-                <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/sender/email/index'); ?>">
+                <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $url->generate('/sender/email/index'); ?>">
                     Back
                 </a>
             </div>
