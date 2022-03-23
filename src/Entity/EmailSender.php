@@ -16,7 +16,7 @@ use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 
-#[Entity(table: 'senders')]
+#[Entity]
 #[SingleTable(value: EmailSender::class)]
 class EmailSender extends Sender implements RoutableEntityInterface, LoggableEntityInterface
 {
@@ -39,7 +39,6 @@ class EmailSender extends Sender implements RoutableEntityInterface, LoggableEnt
 
     public function __construct()
     {
-        $this->type = self::class;
         $this->verification = new Verification();
     }
 
