@@ -16,7 +16,9 @@ use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 
-#[Entity]
+#[Entity(
+    table: 'senders',
+)]
 #[SingleTable(value: EmailSender::class)]
 class EmailSender extends Sender implements RoutableEntityInterface, LoggableEntityInterface
 {
