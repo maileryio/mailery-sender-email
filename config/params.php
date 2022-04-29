@@ -2,7 +2,7 @@
 
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Definitions\Reference;
-use Mailery\Sender\Email\Model\EmailType;
+use Mailery\Sender\Email\Model\EmailSenderType;
 use Mailery\Sender\Email\Entity\EmailSender;
 
 return [
@@ -24,7 +24,7 @@ return [
 
     'maileryio/mailery-sender' => [
         'types' => [
-            Reference::to(EmailType::class),
+            Reference::to(EmailSenderType::class),
         ],
     ],
 

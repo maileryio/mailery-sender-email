@@ -45,10 +45,12 @@ class SenderCrudService
     {
         $sender = (new EmailSender())
             ->setBrand($this->brand)
+            ->setChannel($valueObject->getChannel())
             ->setName($valueObject->getName())
             ->setEmail($valueObject->getEmail())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
+            ->setDescription($valueObject->getDescription())
             ->setStatus(SenderStatus::asPending())
         ;
 
@@ -68,6 +70,7 @@ class SenderCrudService
             ->setName($valueObject->getName())
             ->setReplyName($valueObject->getReplyName())
             ->setReplyEmail($valueObject->getReplyEmail())
+            ->setDescription($valueObject->getDescription())
         ;
 
         (new EntityWriter($this->orm))->write([$sender]);

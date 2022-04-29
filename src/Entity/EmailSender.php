@@ -15,11 +15,12 @@ use Cycle\Annotated\Annotation\Relation\BelongsTo;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
+use Mailery\Sender\Email\Model\EmailSenderType;
 
 #[Entity(
     table: 'senders',
 )]
-#[SingleTable(value: EmailSender::class)]
+#[SingleTable(value: EmailSenderType::class)]
 class EmailSender extends Sender implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;

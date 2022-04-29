@@ -108,7 +108,11 @@ class DefaultController
     {
         $body = $request->getParsedBody();
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)->isValid()) {
+        if (($request->getMethod() === Method::POST)
+            && $form->load($body)
+            && isset($body['submit-sender-email-form'])
+            && $validator->validate($form)->isValid()
+        ) {
             $valueObject = SenderValueObject::fromForm($form);
             $sender = $this->senderCrudService->create($valueObject);
 
@@ -119,6 +123,12 @@ class DefaultController
             return $this->responseFactory
                 ->createResponse(Status::FOUND)
                 ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/index'));
+        }
+
+        if ($form->getChannel() === null) {
+            return $this->responseFactory
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/sender/default/create'));
         }
 
         return $this->viewRenderer->render('create', compact('form'));

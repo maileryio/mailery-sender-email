@@ -6,16 +6,25 @@ namespace Mailery\Sender\Email\Form;
 
 use Yiisoft\Form\FormModel;
 use Mailery\Sender\Email\Entity\EmailSender;
+use Mailery\Sender\Email\Model\EmailSenderType;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\Email;
 use Yiisoft\Validator\Rule\Callback;
+use Yiisoft\Validator\Rule\InRange;
 use Yiisoft\Validator\Result;
 use Mailery\Sender\Repository\SenderRepository;
 use Mailery\Brand\BrandLocatorInterface as BrandLocator;
+use Mailery\Channel\Entity\Channel;
+use Mailery\Channel\Repository\ChannelRepository;
 
 class SenderForm extends FormModel
 {
+    /**
+     * @var string|null
+     */
+    private ?int $channel = null;
+
     /**
      * @var string|null
      */
@@ -37,36 +46,61 @@ class SenderForm extends FormModel
     private ?string $replyEmail = null;
 
     /**
+     * @var string|null
+     */
+    private ?string $description = null;
+
+    /**
      * @var EmailSender|null
      */
-    private ?EmailSender $sender = null;
+    private ?EmailSender $entity = null;
 
     /**
      * @param SenderRepository $senderRepo
+     * @param ChannelRepository $channelRepo
+     * @param EmailSenderType $senderType
      * @param BrandLocator $brandLocator
      */
     public function __construct(
         private SenderRepository $senderRepo,
+        private ChannelRepository $channelRepo,
+        EmailSenderType $senderType,
         BrandLocator $brandLocator
     ) {
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
+        $this->channelRepo = $channelRepo->withBrand($brandLocator->getBrand())
+            ->withChannelTypes(...$senderType->getAvailChannelTypes());
+
         parent::__construct();
     }
 
     /**
-     * @param EmailSender $sender
+     * @param EmailSender $entity
      * @return self
      */
-    public function withEntity(EmailSender $sender): self
+    public function withEntity(EmailSender $entity): self
     {
         $new = clone $this;
-        $new->sender = $sender;
-        $new->name = $sender->getName();
-        $new->email = $sender->getEmail();
-        $new->replyName = $sender->getReplyName();
-        $new->replyEmail = $sender->getReplyEmail();
+        $new->entity = $entity;
+        $new->name = $entity->getName();
+        $new->email = $entity->getEmail();
+        $new->replyName = $entity->getReplyName();
+        $new->replyEmail = $entity->getReplyEmail();
+        $new->description = $entity->getDescription();
 
         return $new;
+    }
+
+    /**
+     * @return Channel|null
+     */
+    public function getChannel(): ?Channel
+    {
+        if ($this->channel === null) {
+            return null;
+        }
+
+        return $this->channelRepo->findByPK($this->channel);
     }
 
     /**
@@ -102,15 +136,25 @@ class SenderForm extends FormModel
     }
 
     /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
      * @return array
      */
     public function getAttributeLabels(): array
     {
         return [
+            'channel' => 'Channel',
             'name' => 'Name',
             'email' => 'Email',
             'replyName' => 'Reply to name',
             'replyEmail' => 'Reply to email',
+            'description' => 'Description (optional)',
         ];
     }
 
@@ -120,15 +164,21 @@ class SenderForm extends FormModel
     public function getRules(): array
     {
         return [
+            'channel' => [
+                Required::rule(),
+                InRange::rule(array_keys($this->getChannelListOptions())),
+            ],
             'name' => [
                 Required::rule(),
                 HasLength::rule()->min(3)->max(255),
                 Callback::rule(function ($value) {
                     $result = new Result();
-                    $record = $this->senderRepo->findByAttribute('name', $value, $this->sender);
 
-                    if ($record !== null) {
-                        $result->addError('Sender with this name already exists.');
+                    if (!empty($value)) {
+                        $record = $this->senderRepo->findByAttribute('name', $value, $this->entity);
+                        if ($record !== null) {
+                            $result->addError('Sender with this name already exists.');
+                        }
                     }
 
                     return $result;
@@ -140,10 +190,12 @@ class SenderForm extends FormModel
                 HasLength::rule()->max(255),
                 Callback::rule(function ($value) {
                     $result = new Result();
-                    $record = $this->senderRepo->findByAttribute('email', $value, $this->sender);
 
-                    if ($record !== null) {
-                        $result->addError('Sender with this email already exists.');
+                    if (!empty($value)) {
+                        $record = $this->senderRepo->findByAttribute('email', $value, $this->entity);
+                        if ($record !== null) {
+                            $result->addError('Sender with this email already exists.');
+                        }
                     }
 
                     return $result;
@@ -159,6 +211,21 @@ class SenderForm extends FormModel
                 HasLength::rule()->max(255),
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getChannelListOptions(): array
+    {
+        $options = [];
+        $channels = $this->channelRepo->findAll();
+
+        foreach ($channels as $channel) {
+            $options[$channel->getId()] = $channel->getName();
+        }
+
+        return $options;
     }
 
 }
