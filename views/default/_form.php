@@ -39,6 +39,6 @@ use Mailery\Widget\Select\Select;
 <?= $field->submitButton()
         ->class('btn btn-primary float-right mt-2')
         ->name('submit-sender-email-form')
-        ->value('Save'); ?>
+        ->value($form->hasEntity() ? 'Save changes' : 'Add sender'); ?>
 
 <?= Form::end(); ?>
