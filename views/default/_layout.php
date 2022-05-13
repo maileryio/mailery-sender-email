@@ -10,7 +10,6 @@ use Yiisoft\Yii\Bootstrap5\Nav;
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
-/** @var bool $submitted */
 
 $this->setTitle($sender->getName());
 
