@@ -90,12 +90,14 @@ class SenderForm extends FormModel
     {
         $new = clone $this;
         $new->entity = $entity;
-        $new->channel = $entity->getChannel()?->getId();
+        $new->channel = $entity->getChannel()->getId();
         $new->name = $entity->getName();
         $new->email = $entity->getEmail();
         $new->replyName = $entity->getReplyName();
         $new->replyEmail = $entity->getReplyEmail();
         $new->description = $entity->getDescription();
+
+        $new->channelRepo = $new->channelRepo->withSameType($entity->getChannel());
 
         return $new;
     }

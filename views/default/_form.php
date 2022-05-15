@@ -5,7 +5,7 @@ use Mailery\Widget\Select\Select;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
-/** @var Yiisoft\Form\FormModelInterface $form */
+/** @var \Mailery\Sender\Email\Form\SenderForm $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
 ?>
@@ -28,7 +28,7 @@ use Mailery\Widget\Select\Select;
 <?= $field->text($form, 'name')->autofocus(); ?>
 
 <?= $field->email($form, 'email')
-        ->attributes(['disabled' => !empty($sender)]); ?>
+        ->attributes(['disabled' => $form->hasEntity()]); ?>
 
 <?= $field->text($form, 'replyName'); ?>
 
