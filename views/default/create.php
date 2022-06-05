@@ -29,6 +29,7 @@ $this->setTitle('New sender');
         </div>
     </div>
 </div>
+
 <div class="mb-2"></div>
 <div class="row">
     <div class="col-12">
