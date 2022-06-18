@@ -91,7 +91,7 @@ $this->setTitle('Email addresses');
                         ],
                         [
                             'label()' => ['Status'],
-                            'value()' => [fn (EmailSender $model) => '<span class="ml-2 badge ' . $model->getStatus()->getCssClass() . '">' . $model->getStatus()->getLabel() . '</span>'],
+                            'value()' => [fn (EmailSender $model) => '<span class="badge ' . $model->getStatus()->getCssClass() . '">' . $model->getStatus()->getLabel() . '</span>'],
                         ],
                         [
                             'label()' => ['Edit'],

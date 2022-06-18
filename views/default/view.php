@@ -62,10 +62,10 @@ $this->setTitle($sender->getName());
                 [
                     'label' => 'Status',
                     'value' => function (EmailSender $data, $index) {
-                        return '<span class="ml-2 badge ' . $data->getStatus()->getCssClass() . '">' . $data->getStatus()->getLabel() . '</span>';
+                        return '<span class="badge ' . $data->getStatus()->getCssClass() . '">' . $data->getStatus()->getLabel() . '</span>';
                     },
                 ],
-                            [
+                [
                     'label' => 'Description',
                     'value' => function (EmailSender $data, $index) {
                         return $data->getDescription();
