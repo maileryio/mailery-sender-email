@@ -32,6 +32,12 @@ $this->setTitle($sender->getName());
                                 ->method('delete')
                                 ->href($url->generate($sender->getDeleteRouteName(), $sender->getDeleteRouteParams()))
                                 ->confirm('Are you sure?')
+                                ->afterRequest(<<<JS
+                                    (res) => {
+                                        res.redirected && res.url && (window.location.href = res.url);
+                                    }
+                                    JS
+                                )
                                 ->options([
                                     'class' => 'btn btn-sm btn-danger mx-sm-1',
                                 ])
