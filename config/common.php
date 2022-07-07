@@ -1,8 +1,8 @@
 <?php
 
 use Mailery\Sender\Email\Service\SenderVerifyService;
-use Yiisoft\Mailer\MessageBodyTemplate;
 use Yiisoft\Aliases\Aliases;
+use Yiisoft\Mailer\MessageBodyTemplate;
 use Yiisoft\Mailer\MailerInterface;
 use Yiisoft\Definitions\DynamicReference;
 use Mailery\Channel\Email\Amazon\Repository\CredentialsRepository;
