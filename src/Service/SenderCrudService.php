@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mailery\Sender\Email\Service;
 
-use Cycle\ORM\ORMInterface;
+use Cycle\ORM\EntityManagerInterface;
 use Mailery\Sender\Field\SenderStatus;
 use Mailery\Sender\Email\Entity\EmailSender;
 use Mailery\Sender\Email\ValueObject\SenderValueObject;
@@ -19,10 +19,10 @@ class SenderCrudService
     private Brand $brand;
 
     /**
-     * @param ORMInterface $orm
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        private ORMInterface $orm
+        private EntityManagerInterface $entityManager
     ) {}
 
     /**
@@ -54,7 +54,7 @@ class SenderCrudService
             ->setStatus(SenderStatus::asPending())
         ;
 
-        (new EntityWriter($this->orm))->write([$sender]);
+        (new EntityWriter($this->entityManager))->write([$sender]);
 
         return $sender;
     }
@@ -73,7 +73,7 @@ class SenderCrudService
             ->setDescription($valueObject->getDescription())
         ;
 
-        (new EntityWriter($this->orm))->write([$sender]);
+        (new EntityWriter($this->entityManager))->write([$sender]);
 
         return $sender;
     }
@@ -84,7 +84,7 @@ class SenderCrudService
      */
     public function delete(EmailSender $sender): bool
     {
-        (new EntityWriter($this->orm))->delete([$sender]);
+        (new EntityWriter($this->entityManager))->delete([$sender]);
 
         return true;
     }

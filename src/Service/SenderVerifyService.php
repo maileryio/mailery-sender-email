@@ -9,7 +9,7 @@ use Mailery\Sender\Email\Entity\Embedded\Verification;
 use Mailery\Sender\Email\Model\VerificationToken;
 use Mailery\Common\Setting\GeneralSettingGroup;
 use Yiisoft\Mailer\MailerInterface;
-use Cycle\ORM\ORMInterface;
+use Cycle\ORM\EntityManagerInterface;
 use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 use Mailery\Sender\Field\SenderStatus;
 
@@ -21,13 +21,13 @@ class SenderVerifyService
     private ?string $verificationToken = null;
 
     /**
-     * @param ORMInterface $orm
+     * @param EntityManagerInterface $entityManager
      * @param MailerInterface $mailer
      * @param GeneralSettingGroup $settingGroup
      * @param DomainRepository $domainRepo
      */
     public function __construct(
-        private ORMInterface $orm,
+        private EntityManagerInterface $entityManager,
         private MailerInterface $mailer,
         private GeneralSettingGroup $settingGroup,
         private DomainRepository $domainRepo
@@ -69,7 +69,7 @@ class SenderVerifyService
 
         $this->mailer->send($message);
 
-        (new EntityWriter($this->orm))->write([$sender]);
+        (new EntityWriter($this->entityManager))->write([$sender]);
     }
 
     /**
@@ -110,7 +110,7 @@ class SenderVerifyService
             }
         }
 
-        (new EntityWriter($this->orm))->write([$sender]);
+        (new EntityWriter($this->entityManager))->write([$sender]);
 
         return $sender->getStatus()->isActive();
     }

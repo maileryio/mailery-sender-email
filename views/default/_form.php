@@ -1,44 +1,44 @@
 <?php
 
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Mailery\Widget\Select\Select;
+use Yiisoft\Form\Field;
 
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
 /** @var Mailery\Sender\Email\Form\SenderForm $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
 ?>
-<?= Form::widget()
+<?= Form::tag()
         ->csrf($csrf)
         ->id('sender-email-form')
-        ->begin(); ?>
+        ->post()
+        ->open(); ?>
 
-<?= $field->select(
+<?= Field::input(
+        Select::class,
         $form,
         'channel',
         [
-            'class' => Select::class,
-            'items()' => [$form->getChannelListOptions()],
+            'optionsData()' => [$form->getChannelListOptions()],
             'searchable()' => [false],
             'clearable()' => [false],
         ]
     ); ?>
 
-<?= $field->text($form, 'name')->autofocus(); ?>
+<?= Field::text($form, 'name')->autofocus(); ?>
 
-<?= $field->email($form, 'email')
-        ->attributes(['disabled' => $form->hasEntity()]); ?>
+<?= Field::email($form, 'email')
+        ->disabled($form->hasEntity()); ?>
 
-<?= $field->text($form, 'replyName'); ?>
+<?= Field::text($form, 'replyName'); ?>
 
-<?= $field->email($form, 'replyEmail'); ?>
+<?= Field::email($form, 'replyEmail'); ?>
 
-<?= $field->textArea($form, 'description', ['rows()' => [5]]); ?>
+<?= Field::textarea($form, 'description', ['rows()' => [5]]); ?>
 
-<?= $field->submitButton()
-        ->class('btn btn-primary float-right mt-2')
+<?= Field::submitButton()
         ->name('submit-sender-email-form')
-        ->value($form->hasEntity() ? 'Save changes' : 'Add sender'); ?>
+        ->content($form->hasEntity() ? 'Save changes' : 'Add sender'); ?>
 
-<?= Form::end(); ?>
+<?= Form::tag()->close(); ?>
