@@ -3,6 +3,7 @@
 use Mailery\Sender\Email\Entity\EmailSender;
 use Yiisoft\Yii\Widgets\ContentDecorator;
 use Yiisoft\Yii\DataView\DetailView;
+use Mailery\Web\Vue\Directive;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -37,38 +38,38 @@ $this->setTitle($sender->getName());
             ->attributes([
                 [
                     'label' => 'Name',
-                    'value' => function (EmailSender $data, $index) {
-                        return $data->getName();
+                    'value' => function (EmailSender $data) {
+                        return Directive::pre($data->getName());
                     },
                 ],
                 [
                     'label' => 'Email',
-                    'value' => function (EmailSender $data, $index) {
-                        return $data->getEmail();
+                    'value' => function (EmailSender $data) {
+                        return Directive::pre($data->getEmail());
                     },
                 ],
                 [
                     'label' => 'Reply name',
-                    'value' => function (EmailSender $data, $index) {
-                        return $data->getReplyName();
+                    'value' => function (EmailSender $data) {
+                        return Directive::pre($data->getReplyName());
                     },
                 ],
                 [
                     'label' => 'Reply email',
-                    'value' => function (EmailSender $data, $index) {
-                        return $data->getReplyEmail();
+                    'value' => function (EmailSender $data) {
+                        return Directive::pre($data->getReplyEmail());
                     },
                 ],
                 [
                     'label' => 'Status',
-                    'value' => function (EmailSender $data, $index) {
-                        return '<span class="badge ' . $data->getStatus()->getCssClass() . '">' . $data->getStatus()->getLabel() . '</span>';
+                    'value' => function (EmailSender $data) {
+                        return '<span class="badge ' . $data->getStatus()->getCssClass() . '">' . Directive::pre($data->getStatus()->getLabel()) . '</span>';
                     },
                 ],
                 [
                     'label' => 'Description',
-                    'value' => function (EmailSender $data, $index) {
-                        return $data->getDescription();
+                    'value' => function (EmailSender $data) {
+                        return Directive::pre($data->getDescription());
                     },
                 ],
             ]);

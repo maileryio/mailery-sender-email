@@ -7,6 +7,7 @@ use Mailery\Widget\Link\Link;
 use Mailery\Widget\Search\Widget\SearchWidget;
 use Yiisoft\Html\Html;
 use Yiisoft\Yii\DataView\GridView;
+use Mailery\Web\Vue\Directive;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Mailery\Sender\Email\Field\VerificationType $verificationType */
@@ -71,27 +72,27 @@ $this->setTitle('Email addresses');
                     ->columns([
                         [
                             'label()' => ['Name'],
-                            'value()' => [fn (EmailSender $model) => Html::a($model->getName(), $url->generate($model->getViewRouteName(), $model->getViewRouteParams()))],
+                            'value()' => [fn (EmailSender $model) => Html::a(Directive::pre($model->getName()), $url->generate($model->getViewRouteName(), $model->getViewRouteParams()))],
                         ],
                         [
                             'label()' => ['Email'],
-                            'value()' => [fn (EmailSender $model) => $model->getEmail()],
+                            'value()' => [fn (EmailSender $model) => Directive::pre($model->getEmail())],
                         ],
                         [
                             'label()' => ['Reply name'],
-                            'value()' => [fn (EmailSender $model) => $model->getReplyName()],
+                            'value()' => [fn (EmailSender $model) => Directive::pre($model->getReplyName())],
                         ],
                         [
                             'label()' => ['Reply email'],
-                            'value()' => [fn (EmailSender $model) => $model->getReplyEmail()],
+                            'value()' => [fn (EmailSender $model) => Directive::pre($model->getReplyEmail())],
                         ],
                         [
                             'label()' => ['Verification'],
-                            'value()' => [fn (EmailSender $model) => $model->getVerification()->getType()->getLabel()],
+                            'value()' => [fn (EmailSender $model) => Directive::pre($model->getVerification()->getType()->getLabel())],
                         ],
                         [
                             'label()' => ['Status'],
-                            'value()' => [fn (EmailSender $model) => '<span class="badge ' . $model->getStatus()->getCssClass() . '">' . $model->getStatus()->getLabel() . '</span>'],
+                            'value()' => [fn (EmailSender $model) => '<span class="badge ' . $model->getStatus()->getCssClass() . '">' . Directive::pre($model->getStatus()->getLabel()) . '</span>'],
                         ],
                         [
                             'label()' => ['Edit'],
